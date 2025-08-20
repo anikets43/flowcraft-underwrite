@@ -47,7 +47,7 @@ export const ApplicationDecisionNode: React.FC<ApplicationDecisionNodeProps> = (
         className="w-4 h-4 bg-primary border-2 border-background rounded-full -top-2"
       />
       
-      <Card className={`bg-workflow-node-bg border-2 shadow-node transition-all ${
+      <Card className={`bg-blue-50 dark:bg-blue-950/20 border-2 shadow-node transition-all ${
         selected ? 'border-primary shadow-elegant' : 'border-workflow-node-border'
       }`}>
         <div className="p-4">

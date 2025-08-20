@@ -73,7 +73,7 @@ export const OfferOptimizationNode: React.FC<OfferOptimizationNodeProps> = ({ da
         className="w-4 h-4 bg-workflow-danger border-2 border-background rounded-full -top-2"
       />
       
-      <Card className={`bg-workflow-node-bg border-2 shadow-node transition-all ${
+      <Card className={`bg-blue-50 dark:bg-blue-950/20 border-2 shadow-node transition-all ${
         selected ? 'border-workflow-danger shadow-elegant' : 'border-workflow-node-border'
       }`}>
         <div className="p-4">

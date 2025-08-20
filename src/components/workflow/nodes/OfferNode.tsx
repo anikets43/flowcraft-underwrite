@@ -59,7 +59,7 @@ export const OfferNode: React.FC<OfferNodeProps> = ({ data, selected }) => {
         className="w-3 h-3 bg-workflow-success border-2 border-background"
       />
       
-      <Card className={`bg-workflow-node-bg border-2 shadow-node transition-all ${
+      <Card className={`bg-blue-50 dark:bg-blue-950/20 border-2 shadow-node transition-all ${
         selected ? 'border-workflow-success shadow-elegant' : 'border-workflow-node-border'
       }`}>
         <div className="p-4">
