@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Node, Edge } from '@xyflow/react';
 import {
   Dialog,
   DialogContent,
@@ -12,22 +13,6 @@ import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Play, CheckCircle, XCircle, AlertCircle, ArrowRight } from 'lucide-react';
-
-interface Node {
-  id: string;
-  type: string;
-  data: Record<string, unknown>;
-  position: { x: number; y: number };
-}
-
-interface Edge {
-  id: string;
-  source: string;
-  target: string;
-  sourceHandle?: string;
-  targetHandle?: string;
-  data?: Record<string, unknown>;
-}
 
 interface WorkflowValidationProps {
   nodes: Node[];
