@@ -20,8 +20,6 @@ interface OfferOptimizationNodeProps {
     description: string;
     goal: string;
     expanded: boolean;
-    leftCondition?: 'PASS' | 'FAIL';
-    rightCondition?: 'PASS' | 'FAIL';
     onDelete: () => void;
     onUpdate: (data: any) => void;
     onHandleContextMenu?: (handleType: 'left' | 'bottom', position: { x: number; y: number }) => void;
@@ -34,9 +32,6 @@ export const OfferOptimizationNode: React.FC<OfferOptimizationNodeProps> = ({ da
   const [editLabel, setEditLabel] = useState(data.label);
   const [editDescription, setEditDescription] = useState(data.description);
   const [editGoal, setEditGoal] = useState(data.goal || 'Maximize return');
-  
-  const leftCondition = data.leftCondition || 'FAIL';
-  const rightCondition = data.rightCondition || 'PASS';
 
   const handleLeftHandleContextMenu = (event: React.MouseEvent) => {
     event.preventDefault();
@@ -52,24 +47,6 @@ export const OfferOptimizationNode: React.FC<OfferOptimizationNodeProps> = ({ da
       const rect = (event.target as HTMLElement).getBoundingClientRect();
       data.onHandleContextMenu('bottom', { x: rect.left, y: rect.top });
     }
-  };
-
-  const handleToggleLeftCondition = () => {
-    const newCondition = leftCondition === 'FAIL' ? 'PASS' : 'FAIL';
-    const newRightCondition = newCondition === 'FAIL' ? 'PASS' : 'FAIL';
-    data.onUpdate({ 
-      leftCondition: newCondition, 
-      rightCondition: newRightCondition 
-    });
-  };
-
-  const handleToggleRightCondition = () => {
-    const newCondition = rightCondition === 'PASS' ? 'FAIL' : 'PASS';
-    const newLeftCondition = newCondition === 'PASS' ? 'FAIL' : 'PASS';
-    data.onUpdate({ 
-      rightCondition: newCondition, 
-      leftCondition: newLeftCondition 
-    });
   };
 
   const handleSave = () => {
@@ -126,39 +103,6 @@ export const OfferOptimizationNode: React.FC<OfferOptimizationNodeProps> = ({ da
               <Badge variant="secondary" className="text-xs bg-workflow-danger-bg text-workflow-danger">
                 Offer Optimization
               </Badge>
-            </div>
-            
-            <div className="flex justify-between items-center pt-3 border-t border-workflow-node-border">
-              <button
-                onClick={handleToggleLeftCondition}
-                className={`flex items-center gap-2 px-2 py-1 rounded-md transition-colors hover:bg-muted/50 ${
-                  leftCondition === 'FAIL' 
-                    ? 'text-workflow-danger' 
-                    : 'text-workflow-success'
-                }`}
-              >
-                <div className={`w-3 h-3 rounded-full ${
-                  leftCondition === 'FAIL' 
-                    ? 'bg-workflow-danger' 
-                    : 'bg-workflow-success'
-                }`}></div>
-                <span className="text-xs font-medium cursor-pointer">{leftCondition}</span>
-              </button>
-              <button
-                onClick={handleToggleRightCondition}
-                className={`flex items-center gap-2 px-2 py-1 rounded-md transition-colors hover:bg-muted/50 ${
-                  rightCondition === 'PASS' 
-                    ? 'text-workflow-success' 
-                    : 'text-workflow-danger'
-                }`}
-              >
-                <span className="text-xs font-medium cursor-pointer">{rightCondition}</span>
-                <div className={`w-3 h-3 rounded-full ${
-                  rightCondition === 'PASS' 
-                    ? 'bg-workflow-success' 
-                    : 'bg-workflow-danger'
-                }`}></div>
-              </button>
             </div>
           </div>
         </div>
