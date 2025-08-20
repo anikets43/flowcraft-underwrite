@@ -1,0 +1,180 @@
+/* Drawflow Custom Styles */
+.drawflow-container {
+  background: hsl(var(--workflow-canvas));
+  position: relative;
+}
+
+.drawflow .drawflow-node {
+  background: hsl(var(--workflow-node-bg));
+  border: 2px solid hsl(var(--workflow-node-border));
+  border-radius: 12px;
+  box-shadow: var(--shadow-node);
+  transition: var(--transition-smooth);
+  min-width: 280px;
+  max-width: 320px;
+}
+
+.drawflow .drawflow-node:hover {
+  box-shadow: var(--shadow-elegant);
+  border-color: hsl(var(--primary));
+}
+
+.drawflow .drawflow-node.selected {
+  border-color: hsl(var(--primary));
+  box-shadow: 0 0 0 4px hsl(var(--primary) / 0.1);
+}
+
+.drawflow-node-content {
+  padding: 16px;
+  border-radius: 10px;
+  border: 1px solid;
+  transition: var(--transition-smooth);
+}
+
+.drawflow-node-content h3 {
+  color: hsl(var(--foreground));
+  font-weight: 600;
+  font-size: 14px;
+  margin: 0;
+}
+
+.drawflow-node-content p {
+  color: hsl(var(--muted-foreground));
+  font-size: 12px;
+  line-height: 1.4;
+  margin: 8px 0;
+}
+
+.drawflow .connection .main-path {
+  stroke: hsl(var(--primary));
+  stroke-width: 3px;
+  fill: none;
+}
+
+.drawflow .connection .main-path:hover {
+  stroke: hsl(var(--primary-glow));
+  stroke-width: 4px;
+}
+
+.drawflow .connection.selected .main-path {
+  stroke: hsl(var(--primary-glow));
+  stroke-width: 4px;
+}
+
+/* Input/Output styling */
+.drawflow .drawflow-node .input {
+  background: hsl(var(--primary));
+  border: 2px solid hsl(var(--workflow-node-bg));
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  top: 50%;
+  left: -10px;
+}
+
+.drawflow .drawflow-node .output {
+  background: hsl(var(--primary));
+  border: 2px solid hsl(var(--workflow-node-bg));
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  top: 50%;
+  right: -10px;
+}
+
+.drawflow .drawflow-node .input:hover,
+.drawflow .drawflow-node .output:hover {
+  background: hsl(var(--primary-glow));
+  transform: scale(1.2);
+}
+
+/* Multiple outputs positioning */
+.drawflow .drawflow-node .outputs .output_1 {
+  top: 30%;
+}
+
+.drawflow .drawflow-node .outputs .output_2 {
+  top: 70%;
+}
+
+/* Button styling */
+.delete-btn, .duplicate-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+
+.delete-btn:hover, .duplicate-btn:hover {
+  opacity: 1;
+  background: hsl(var(--muted) / 0.2);
+}
+
+/* Context menu positioning */
+.drawflow .drawflow-node .context-menu {
+  position: absolute;
+  background: hsl(var(--popover));
+  border: 1px solid hsl(var(--border));
+  border-radius: 8px;
+  box-shadow: var(--shadow-elegant);
+  z-index: 1000;
+  min-width: 200px;
+}
+
+/* Workflow specific node colors */
+.drawflow-node-content.bg-primary\/10 {
+  background: hsl(var(--primary) / 0.1);
+  border-color: hsl(var(--primary));
+}
+
+.drawflow-node-content.bg-workflow-success\/10 {
+  background: hsl(var(--workflow-success) / 0.1);
+  border-color: hsl(var(--workflow-success));
+}
+
+.drawflow-node-content.bg-workflow-danger\/10 {
+  background: hsl(var(--workflow-danger) / 0.1);
+  border-color: hsl(var(--workflow-danger));
+}
+
+.drawflow-node-content.bg-workflow-warning\/10 {
+  background: hsl(var(--workflow-warning) / 0.1);
+  border-color: hsl(var(--workflow-warning));
+}
+
+/* Dark mode adjustments */
+.dark .drawflow .drawflow-node {
+  background: hsl(var(--workflow-node-bg));
+  border-color: hsl(var(--workflow-node-border));
+}
+
+.dark .drawflow .connection .main-path {
+  stroke: hsl(var(--primary));
+}
+
+.dark .drawflow .drawflow-node .input,
+.dark .drawflow .drawflow-node .output {
+  background: hsl(var(--primary));
+  border-color: hsl(var(--workflow-node-bg));
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .drawflow .drawflow-node {
+    min-width: 200px;
+    max-width: 240px;
+  }
+  
+  .drawflow-node-content {
+    padding: 12px;
+  }
+  
+  .drawflow-node-content h3 {
+    font-size: 12px;
+  }
+  
+  .drawflow-node-content p {
+    font-size: 11px;
+  }
+}

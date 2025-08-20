@@ -1,7 +1,7 @@
-import { WorkflowEditor } from '@/components/workflow/WorkflowEditor';
+import { DrawflowEditor } from '@/components/workflow/DrawflowEditor';
 
 const Index = () => {
-  return <WorkflowEditor />;
+  return <DrawflowEditor />;
 };
 
 export default Index;
