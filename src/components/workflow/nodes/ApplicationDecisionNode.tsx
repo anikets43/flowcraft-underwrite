@@ -17,11 +17,27 @@ interface ApplicationDecisionNodeProps {
     onDelete: () => void;
     onUpdate: (data: any) => void;
     onDuplicate: () => void;
+    onHandleContextMenu?: (handleType: 'left' | 'bottom', position: { x: number; y: number }) => void;
   };
   selected: boolean;
 }
 
 export const ApplicationDecisionNode: React.FC<ApplicationDecisionNodeProps> = ({ data, selected }) => {
+  const handleLeftHandleContextMenu = (event: React.MouseEvent) => {
+    event.preventDefault();
+    if (data.onHandleContextMenu) {
+      const rect = (event.target as HTMLElement).getBoundingClientRect();
+      data.onHandleContextMenu('left', { x: rect.left, y: rect.top });
+    }
+  };
+
+  const handleBottomHandleContextMenu = (event: React.MouseEvent) => {
+    event.preventDefault();
+    if (data.onHandleContextMenu) {
+      const rect = (event.target as HTMLElement).getBoundingClientRect();
+      data.onHandleContextMenu('bottom', { x: rect.left, y: rect.top });
+    }
+  };
 
   return (
     <div className="min-w-[320px] relative">
@@ -75,31 +91,34 @@ export const ApplicationDecisionNode: React.FC<ApplicationDecisionNodeProps> = (
             
             <div className="flex justify-between items-center pt-3 border-t border-workflow-node-border">
               <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-workflow-success rounded-full"></div>
-                <span className="text-xs text-workflow-success font-medium">Pass</span>
+                <div className="w-3 h-3 bg-workflow-danger rounded-full"></div>
+                <span className="text-xs text-workflow-danger font-medium">Terminal (Left)</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-xs text-workflow-danger font-medium">Fail</span>
-                <div className="w-3 h-3 bg-workflow-danger rounded-full"></div>
+                <span className="text-xs text-workflow-success font-medium">Continue (Bottom)</span>
+                <div className="w-3 h-3 bg-workflow-success rounded-full"></div>
               </div>
             </div>
           </div>
         </div>
       </Card>
 
+      {/* Left handle for terminal nodes */}
       <Handle
         type="source"
-        position={Position.Bottom}
-        id="pass"
-        className="w-4 h-4 bg-workflow-success border-2 border-background rounded-full -bottom-2"
-        style={{ left: '25%' }}
+        position={Position.Left}
+        id="terminal"
+        className="w-4 h-4 bg-workflow-danger border-2 border-background rounded-full -left-2 cursor-pointer"
+        onContextMenu={handleLeftHandleContextMenu}
       />
+      
+      {/* Bottom handle for continuation */}
       <Handle
         type="source"
         position={Position.Bottom}
-        id="fail"
-        className="w-4 h-4 bg-workflow-danger border-2 border-background rounded-full -bottom-2"
-        style={{ left: '75%' }}
+        id="continue"
+        className="w-4 h-4 bg-workflow-success border-2 border-background rounded-full -bottom-2 cursor-pointer"
+        onContextMenu={handleBottomHandleContextMenu}
       />
     </div>
   );

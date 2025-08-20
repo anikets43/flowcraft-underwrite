@@ -55,11 +55,10 @@ export const initialEdges: Edge[] = [
   {
     id: 'e1-2',
     source: 'application-decision-1',
-    sourceHandle: 'pass',
+    sourceHandle: 'continue',
     target: 'offer-filtering-1',
-    type: 'insertable',
-    animated: true,
-    style: { stroke: 'hsl(var(--workflow-success))' },
+    type: 'conditional',
+    data: { condition: 'PASS' },
     markerEnd: {
       type: MarkerType.ArrowClosed,
     },
@@ -67,11 +66,10 @@ export const initialEdges: Edge[] = [
   {
     id: 'e2-3',
     source: 'offer-filtering-1',
-    sourceHandle: 'pass',
+    sourceHandle: 'continue',
     target: 'optimization-1',
-    type: 'insertable',
-    animated: true,
-    style: { stroke: 'hsl(var(--workflow-success))' },
+    type: 'conditional',
+    data: { condition: 'PASS' },
     markerEnd: {
       type: MarkerType.ArrowClosed,
     },

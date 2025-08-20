@@ -26,6 +26,8 @@ import { OfferFilteringNode } from './nodes/OfferFilteringNode';
 import { OfferOptimizationNode } from './nodes/OfferOptimizationNode';
 import { TerminalNode } from './nodes/TerminalNode';
 import { InsertableEdge } from './edges/InsertableEdge';
+import { ConditionalEdge } from './edges/ConditionalEdge';
+import { HandleContextMenu } from './HandleContextMenu';
 import { initialNodes, initialEdges } from './initialElements';
 
 const nodeTypes = {
@@ -37,6 +39,7 @@ const nodeTypes = {
 
 const edgeTypes = {
   insertable: InsertableEdge,
+  conditional: ConditionalEdge,
 };
 
 export const WorkflowEditor = () => {
@@ -45,6 +48,11 @@ export const WorkflowEditor = () => {
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [selectedNodeForRules, setSelectedNodeForRules] = useState<Node | null>(null);
   const [showAddMenu, setShowAddMenu] = useState(false);
+  const [contextMenu, setContextMenu] = useState<{
+    position: { x: number; y: number };
+    handleType: 'left' | 'bottom';
+    sourceNodeId: string;
+  } | null>(null);
 
   const availableBlocks = [
     {
@@ -98,13 +106,19 @@ export const WorkflowEditor = () => {
   ];
 
   const onConnect = useCallback(
-    (params: Connection) => setEdges((eds) => addEdge({ 
-      ...params, 
-      type: 'insertable',
-      markerEnd: {
-        type: MarkerType.ArrowClosed,
-      },
-    }, eds)),
+    (params: Connection) => {
+      const sourceHandle = params.sourceHandle;
+      const condition = sourceHandle === 'terminal' ? 'FAIL' : 'PASS';
+      
+      setEdges((eds) => addEdge({ 
+        ...params, 
+        type: 'conditional',
+        data: { condition },
+        markerEnd: {
+          type: MarkerType.ArrowClosed,
+        },
+      }, eds));
+    },
     [setEdges],
   );
 
@@ -113,57 +127,96 @@ export const WorkflowEditor = () => {
     setSelectedNodeForRules(node);
   }, [selectedNodeId]);
 
-  const addNode = useCallback((type: string, subtype?: string) => {
-    const getNodeData = (nodeType: string, nodeSubtype?: string) => {
-      const baseData = {
-        expanded: false,
-        executionFlowEnabled: true,
-        passOutcome: 'proceed',
-        failOutcome: 'auto-denial',
-        rules: [],
-      };
+  const handleContextMenuAddNode = useCallback((nodeType: string, subtype?: string) => {
+    if (!contextMenu) return;
 
-      switch (nodeType) {
-        case 'application-decision':
-          return {
-            ...baseData,
-            label: 'New Application Decision',
-            description: 'Add rule based decision points to approve or deny applications based on chosen criteria',
-          };
-        case 'offer-filtering':
-          return {
-            ...baseData,
-            label: 'New Offer Filtering',
-            description: 'Apply business, partner, or product‑specific rules to remove offers that cannot be extended',
-          };
-        case 'offer-optimization':
-          return {
-            ...baseData,
-            label: 'New Offer Optimization',
-            description: 'Review the full set of generated offers against a defined goal to maximize return or minimize risk',
-            goal: 'Maximize return',
-            executionFlowEnabled: false, // Always disabled for optimization
-          };
-        case 'terminal':
-          const terminalLabels = {
-            'auto-denial': 'STOP WITH AUTO DENIAL',
-            'manual-review': 'STOP WITH MANUAL REVIEW',
-            'auto-approval': 'STOP WITH AUTO APPROVAL',
-          };
-          const terminalDescriptions = {
-            'auto-denial': 'Automatically deny the application',
-            'manual-review': 'Send application for manual review',
-            'auto-approval': 'Automatically approve the application',
-          };
-          return {
-            label: terminalLabels[nodeSubtype as keyof typeof terminalLabels] || 'Terminal Event',
-            description: terminalDescriptions[nodeSubtype as keyof typeof terminalDescriptions] || 'Terminal event',
-            terminalType: nodeSubtype,
-          };
-        default:
-          return baseData;
-      }
+    const sourceNode = nodes.find(n => n.id === contextMenu.sourceNodeId);
+    if (!sourceNode) return;
+
+    // Create new node
+    const newNode: Node = {
+      id: `${nodeType}-${subtype || ''}-${Date.now()}`,
+      type: nodeType,
+      position: { 
+        x: sourceNode.position.x + (contextMenu.handleType === 'left' ? -250 : 0),
+        y: sourceNode.position.y + (contextMenu.handleType === 'bottom' ? 150 : 0),
+      },
+      data: getNodeData(nodeType, subtype),
     };
+
+    // Create edge from source to new node
+    const sourceHandle = contextMenu.handleType === 'left' ? 'terminal' : 'continue';
+    const condition = contextMenu.handleType === 'left' ? 'FAIL' : 'PASS';
+    
+    const newEdge: Edge = {
+      id: `${contextMenu.sourceNodeId}-${newNode.id}`,
+      source: contextMenu.sourceNodeId,
+      target: newNode.id,
+      sourceHandle,
+      type: 'conditional',
+      data: { condition },
+      markerEnd: {
+        type: MarkerType.ArrowClosed,
+      },
+    };
+
+    setNodes((nds) => [...nds, newNode]);
+    setEdges((eds) => [...eds, newEdge]);
+    setContextMenu(null);
+  }, [contextMenu, nodes, setNodes, setEdges]);
+
+  const getNodeData = (nodeType: string, nodeSubtype?: string) => {
+    const baseData = {
+      expanded: false,
+      executionFlowEnabled: true,
+      passOutcome: 'proceed',
+      failOutcome: 'auto-denial',
+      rules: [],
+    };
+
+    switch (nodeType) {
+      case 'application-decision':
+        return {
+          ...baseData,
+          label: 'New Application Decision',
+          description: 'Add rule based decision points to approve or deny applications based on chosen criteria',
+        };
+      case 'offer-filtering':
+        return {
+          ...baseData,
+          label: 'New Offer Filtering',
+          description: 'Apply business, partner, or product‑specific rules to remove offers that cannot be extended',
+        };
+      case 'offer-optimization':
+        return {
+          ...baseData,
+          label: 'New Offer Optimization',
+          description: 'Review the full set of generated offers against a defined goal to maximize return or minimize risk',
+          goal: 'Maximize return',
+          executionFlowEnabled: false, // Always disabled for optimization
+        };
+      case 'terminal':
+        const terminalLabels = {
+          'auto-denial': 'STOP WITH AUTO DENIAL',
+          'manual-review': 'STOP WITH MANUAL REVIEW',
+          'auto-approval': 'STOP WITH AUTO APPROVAL',
+        };
+        const terminalDescriptions = {
+          'auto-denial': 'Automatically deny the application',
+          'manual-review': 'Send application for manual review',
+          'auto-approval': 'Automatically approve the application',
+        };
+        return {
+          label: terminalLabels[nodeSubtype as keyof typeof terminalLabels] || 'Terminal Event',
+          description: terminalDescriptions[nodeSubtype as keyof typeof terminalDescriptions] || 'Terminal event',
+          terminalType: nodeSubtype,
+        };
+      default:
+        return baseData;
+    }
+  };
+
+  const addNode = useCallback((type: string, subtype?: string) => {
 
     const newNode: Node = {
       id: `${type}-${subtype || ''}-${Date.now()}`,
@@ -173,6 +226,33 @@ export const WorkflowEditor = () => {
     };
     setNodes((nds) => [...nds, newNode]);
   }, [setNodes]);
+
+  const toggleEdgeCondition = useCallback((edgeId: string) => {
+    setEdges((eds) => 
+      eds.map((edge) => {
+        if (edge.id === edgeId) {
+          const currentCondition = edge.data?.condition || 'FAIL';
+          const newCondition = currentCondition === 'PASS' ? 'FAIL' : 'PASS';
+          return {
+            ...edge,
+            data: {
+              ...edge.data,
+              condition: newCondition,
+            },
+          };
+        }
+        return edge;
+      })
+    );
+  }, [setEdges]);
+
+  const handleNodeContextMenu = useCallback((nodeId: string, handleType: 'left' | 'bottom', position: { x: number; y: number }) => {
+    setContextMenu({
+      position,
+      handleType,
+      sourceNodeId: nodeId,
+    });
+  }, []);
 
   const deleteNode = useCallback((nodeId: string) => {
     setNodes((nds) => nds.filter((n) => n.id !== nodeId));
@@ -418,6 +498,8 @@ export const WorkflowEditor = () => {
                 onDelete: () => deleteNode(node.id),
                 onUpdate: (data: any) => updateNodeData(node.id, data),
                 onDuplicate: () => duplicateNode(node.id),
+                onHandleContextMenu: (handleType: 'left' | 'bottom', position: { x: number; y: number }) => 
+                  handleNodeContextMenu(node.id, handleType, position),
               }
             }))}
             edges={edges.map(edge => ({
@@ -425,6 +507,7 @@ export const WorkflowEditor = () => {
               data: {
                 ...edge.data,
                 onInsertNode: insertNodeBetween,
+                onToggleCondition: toggleEdgeCondition,
               }
             }))}
             onNodesChange={onNodesChange}
@@ -467,6 +550,15 @@ export const WorkflowEditor = () => {
             selectedNode={selectedNodeForRules}
             onUpdateNode={updateNodeData}
             onClose={() => setSelectedNodeForRules(null)}
+          />
+        )}
+
+        {contextMenu && (
+          <HandleContextMenu
+            position={contextMenu.position}
+            handleType={contextMenu.handleType}
+            onAddNode={handleContextMenuAddNode}
+            onClose={() => setContextMenu(null)}
           />
         )}
       </div>
