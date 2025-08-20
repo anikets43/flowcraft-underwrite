@@ -15,24 +15,24 @@ interface WorkflowSidebarProps {
 
 const nodeTypes = [
   {
-    type: 'strategy',
-    label: 'Strategy Node',
-    description: 'Business rules and conditions',
-    icon: Zap,
+    type: 'application-decision',
+    label: 'Application Decision',
+    description: 'Add rule based decision points to approve or deny applications based on chosen criteria',
+    icon: Settings,
     color: 'text-primary',
   },
   {
-    type: 'offer',
-    label: 'Offer Node',
-    description: 'Present offers to customers',
+    type: 'offer-filtering',
+    label: 'Offer Filtering',
+    description: 'Apply business, partner, or product‑specific rules to remove offers that cannot be extended',
     icon: Gift,
     color: 'text-workflow-success',
   },
   {
-    type: 'decision',
-    label: 'Decision Node',
-    description: 'Pure pass/fail branching',
-    icon: GitBranch,
+    type: 'offer-optimization',
+    label: 'Offer Optimization',
+    description: 'Review the full set of generated offers against a defined goal to maximize return or minimize risk',
+    icon: Zap,
     color: 'text-workflow-danger',
   },
 ];
@@ -49,7 +49,7 @@ export const WorkflowSidebar: React.FC<WorkflowSidebarProps> = ({ onAddNode }) =
 
       <div className="space-y-3">
         <h3 className="text-sm font-medium text-workflow-sidebar-foreground/80 mb-3">
-          Available Nodes
+          Available Blocks
         </h3>
         
         {nodeTypes.map((nodeType) => {
@@ -90,19 +90,19 @@ export const WorkflowSidebar: React.FC<WorkflowSidebarProps> = ({ onAddNode }) =
             variant="outline" 
             size="sm" 
             className="w-full justify-start text-xs"
-            onClick={() => onAddNode('strategy')}
+            onClick={() => onAddNode('application-decision')}
           >
-            <Zap className="w-3 h-3 mr-2" />
-            Add Strategy
+            <Settings className="w-3 h-3 mr-2" />
+            Add Application Decision
           </Button>
           <Button 
             variant="outline" 
             size="sm" 
             className="w-full justify-start text-xs"
-            onClick={() => onAddNode('decision')}
+            onClick={() => onAddNode('offer-filtering')}
           >
-            <GitBranch className="w-3 h-3 mr-2" />
-            Add Decision
+            <Gift className="w-3 h-3 mr-2" />
+            Add Offer Filtering
           </Button>
         </div>
       </div>

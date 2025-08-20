@@ -17,16 +17,16 @@ import '@xyflow/react/dist/style.css';
 import { Button } from '@/components/ui/button';
 import { Play } from 'lucide-react';
 import { WorkflowSidebar } from './WorkflowSidebar';
-import { StrategyNode } from './nodes/StrategyNode';
-import { OfferNode } from './nodes/OfferNode';
-import { DecisionNode } from './nodes/DecisionNode';
+import { ApplicationDecisionNode } from './nodes/ApplicationDecisionNode';
+import { OfferFilteringNode } from './nodes/OfferFilteringNode';
+import { OfferOptimizationNode } from './nodes/OfferOptimizationNode';
 import { InsertableEdge } from './edges/InsertableEdge';
 import { initialNodes, initialEdges } from './initialElements';
 
 const nodeTypes = {
-  strategy: StrategyNode,
-  offer: OfferNode,
-  decision: DecisionNode,
+  'application-decision': ApplicationDecisionNode,
+  'offer-filtering': OfferFilteringNode,
+  'offer-optimization': OfferOptimizationNode,
 };
 
 const edgeTypes = {
@@ -48,16 +48,46 @@ export const WorkflowEditor = () => {
   }, [selectedNodeId]);
 
   const addNode = useCallback((type: string) => {
+    const getNodeData = (nodeType: string) => {
+      const baseData = {
+        expanded: false,
+        executionFlowEnabled: true,
+        passOutcome: 'proceed',
+        failOutcome: 'auto-denial',
+        rules: [],
+      };
+
+      switch (nodeType) {
+        case 'application-decision':
+          return {
+            ...baseData,
+            label: 'New Application Decision',
+            description: 'Add rule based decision points to approve or deny applications based on chosen criteria',
+          };
+        case 'offer-filtering':
+          return {
+            ...baseData,
+            label: 'New Offer Filtering',
+            description: 'Apply business, partner, or product‑specific rules to remove offers that cannot be extended',
+          };
+        case 'offer-optimization':
+          return {
+            ...baseData,
+            label: 'New Offer Optimization',
+            description: 'Review the full set of generated offers against a defined goal to maximize return or minimize risk',
+            goal: 'Maximize return',
+            executionFlowEnabled: false, // Always disabled for optimization
+          };
+        default:
+          return baseData;
+      }
+    };
+
     const newNode: Node = {
       id: `${type}-${Date.now()}`,
       type,
       position: { x: Math.random() * 300, y: Math.random() * 300 },
-      data: {
-        label: `New ${type.charAt(0).toUpperCase() + type.slice(1)}`,
-        description: 'Enter description...',
-        rules: [],
-        expanded: false,
-      },
+      data: getNodeData(type),
     };
     setNodes((nds) => [...nds, newNode]);
   }, [setNodes]);
@@ -77,6 +107,28 @@ export const WorkflowEditor = () => {
     );
   }, [setNodes]);
 
+  const duplicateNode = useCallback((nodeId: string) => {
+    const nodeToDuplicate = nodes.find(n => n.id === nodeId);
+    if (!nodeToDuplicate) return;
+
+    // Only allow duplication for Application Decision and Offer Filtering
+    if (!['application-decision', 'offer-filtering'].includes(nodeToDuplicate.type)) return;
+
+    const newNode: Node = {
+      ...nodeToDuplicate,
+      id: `${nodeToDuplicate.type}-${Date.now()}`,
+      position: {
+        x: nodeToDuplicate.position.x + 50,
+        y: nodeToDuplicate.position.y + 50,
+      },
+      data: {
+        ...nodeToDuplicate.data,
+        label: `${nodeToDuplicate.data.label} (Copy)`,
+      },
+    };
+    setNodes((nds) => [...nds, newNode]);
+  }, [nodes, setNodes]);
+
   const insertNodeBetween = useCallback((sourceId: string, targetId: string) => {
     const sourceNode = nodes.find(n => n.id === sourceId);
     const targetNode = nodes.find(n => n.id === targetId);
@@ -85,17 +137,20 @@ export const WorkflowEditor = () => {
 
     // Create new node positioned between source and target
     const newNode: Node = {
-      id: `strategy-${Date.now()}`,
-      type: 'strategy',
+      id: `application-decision-${Date.now()}`,
+      type: 'application-decision',
       position: {
         x: (sourceNode.position.x + targetNode.position.x) / 2,
         y: (sourceNode.position.y + targetNode.position.y) / 2,
       },
       data: {
-        label: 'New Strategy',
-        description: 'Enter description...',
+        label: 'New Application Decision',
+        description: 'Add rule based decision points to approve or deny applications',
         rules: [],
         expanded: false,
+        executionFlowEnabled: true,
+        passOutcome: 'proceed',
+        failOutcome: 'auto-denial',
       },
     };
 
@@ -153,6 +208,7 @@ export const WorkflowEditor = () => {
               expanded: node.id === selectedNodeId,
               onDelete: () => deleteNode(node.id),
               onUpdate: (data: any) => updateNodeData(node.id, data),
+              onDuplicate: () => duplicateNode(node.id),
             }
           }))}
           edges={edges.map(edge => ({
