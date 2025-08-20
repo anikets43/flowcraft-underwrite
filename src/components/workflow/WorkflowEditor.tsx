@@ -413,6 +413,19 @@ export const WorkflowEditor = () => {
     <SidebarProvider>
       <div className="h-screen w-full flex bg-workflow-canvas">
         <div className="flex-1 relative">
+          {/* Helper Text */}
+          <div className="absolute top-4 left-4 z-10 max-w-md">
+            <div className="bg-background/95 backdrop-blur-sm border border-border rounded-lg p-4 shadow-lg">
+              <h3 className="font-semibold text-sm text-foreground mb-2">Build Your Decision Workflow</h3>
+              <div className="text-xs text-muted-foreground space-y-1.5">
+                <p>• Right-click dots to add connections</p>
+                <p>• Left dots (side) match target colors: <span className="text-yellow-600">yellow</span> for Manual Review, <span className="text-red-600">red</span> for Auto Denial, <span className="text-green-600">green</span> for Auto Approval</p>
+                <p>• Bottom dots (continue path) are always <span className="text-green-600">green</span></p>
+                <p>• Conditions automatically toggle opposite sides</p>
+              </div>
+            </div>
+          </div>
+
           {/* Top Toolbar */}
           <div className="absolute top-4 right-4 flex justify-end items-center z-10">
             <WorkflowValidation
