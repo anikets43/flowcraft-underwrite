@@ -86,14 +86,6 @@ export const TerminalNode: React.FC<TerminalNodeProps> = ({ data, selected }) =>
               <Trash2 className="w-3 h-3" />
             </Button>
           </div>
-          
-          <div className="mt-3 pt-2 border-t border-workflow-node-border">
-            <div className="flex items-center justify-center">
-              <div className={`px-2 py-1 rounded-full text-xs font-medium ${config.bgColor} ${config.color}`}>
-                Terminal Event
-              </div>
-            </div>
-          </div>
         </div>
       </Card>
     </div>
