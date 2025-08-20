@@ -234,11 +234,31 @@ export const WorkflowEditor = () => {
     console.log('toggleEdgeCondition called with edgeId:', edgeId);
     setEdges((eds) => {
       console.log('Current edges:', eds.map(e => ({ id: e.id, condition: e.data?.condition })));
+      
+      // Find the clicked edge to get its source node
+      const clickedEdge = eds.find(e => e.id === edgeId);
+      if (!clickedEdge) return eds;
+      
+      const sourceNodeId = clickedEdge.source;
+      
       const updatedEdges = eds.map((edge) => {
         if (edge.id === edgeId) {
+          // Toggle the clicked edge
           const currentCondition = edge.data?.condition || 'FAIL';
           const newCondition = currentCondition === 'PASS' ? 'FAIL' : 'PASS';
           console.log(`Edge ${edgeId}: ${currentCondition} -> ${newCondition}`);
+          return {
+            ...edge,
+            data: {
+              ...edge.data,
+              condition: newCondition,
+            },
+          };
+        } else if (edge.source === sourceNodeId && edge.type === 'conditional') {
+          // Toggle sibling edges from the same source node
+          const currentCondition = edge.data?.condition || 'FAIL';
+          const newCondition = currentCondition === 'PASS' ? 'FAIL' : 'PASS';
+          console.log(`Sibling edge ${edge.id}: ${currentCondition} -> ${newCondition}`);
           return {
             ...edge,
             data: {
