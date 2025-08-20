@@ -231,11 +231,14 @@ export const WorkflowEditor = () => {
   }, [setNodes]);
 
   const toggleEdgeCondition = useCallback((edgeId: string) => {
-    setEdges((eds) => 
-      eds.map((edge) => {
+    console.log('toggleEdgeCondition called with edgeId:', edgeId);
+    setEdges((eds) => {
+      console.log('Current edges:', eds.map(e => ({ id: e.id, condition: e.data?.condition })));
+      const updatedEdges = eds.map((edge) => {
         if (edge.id === edgeId) {
           const currentCondition = edge.data?.condition || 'FAIL';
           const newCondition = currentCondition === 'PASS' ? 'FAIL' : 'PASS';
+          console.log(`Edge ${edgeId}: ${currentCondition} -> ${newCondition}`);
           return {
             ...edge,
             data: {
@@ -245,8 +248,10 @@ export const WorkflowEditor = () => {
           };
         }
         return edge;
-      })
-    );
+      });
+      console.log('Updated edges:', updatedEdges.map(e => ({ id: e.id, condition: e.data?.condition })));
+      return updatedEdges;
+    });
   }, [setEdges]);
 
   const handleNodeContextMenu = useCallback((nodeId: string, handleType: 'left' | 'bottom', position: { x: number; y: number }) => {

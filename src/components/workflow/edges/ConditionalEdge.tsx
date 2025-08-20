@@ -35,6 +35,8 @@ export const ConditionalEdge: React.FC<ConditionalEdgeProps> = ({
   markerEnd,
   data,
 }) => {
+  console.log('ConditionalEdge rendering:', { id, condition: data?.condition, hasToggleFunction: !!data?.onToggleCondition });
+  
   const [edgePath, labelX, labelY] = getBezierPath({
     sourceX,
     sourceY,
@@ -48,8 +50,12 @@ export const ConditionalEdge: React.FC<ConditionalEdgeProps> = ({
   const isPass = condition === 'PASS';
 
   const handleToggle = () => {
+    console.log('Button clicked! Edge ID:', id, 'Current condition:', condition);
     if (data?.onToggleCondition) {
+      console.log('Calling onToggleCondition...');
       data.onToggleCondition(id);
+    } else {
+      console.log('ERROR: No onToggleCondition function found!');
     }
   };
 
