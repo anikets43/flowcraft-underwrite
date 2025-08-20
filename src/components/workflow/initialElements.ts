@@ -4,10 +4,10 @@ export const initialNodes: Node[] = [
   {
     id: 'application-decision-1',
     type: 'application-decision',
-    position: { x: 250, y: 50 },
+    position: { x: 100, y: 100 },
     data: {
       label: 'Credit Eligibility Check',
-      description: 'Evaluate whether the application meets minimum credit criteria before proceeding to deeper underwriting. This step applies rule for checking applicant\'s FICO against predefined thresholds. Applications fall below the FICO threshold are declined at this stage, while those passing move forward for further assessment.',
+      description: 'Evaluate whether the application meets minimum credit criteria before proceeding to deeper underwriting.',
       rules: [
         { 
           condition: 'credit_score >= 650', 
@@ -24,6 +24,50 @@ export const initialNodes: Node[] = [
       failOutcome: 'auto-denial',
     },
   },
+  {
+    id: 'offer-filtering-1',
+    type: 'offer-filtering',
+    position: { x: 100, y: 300 },
+    data: {
+      label: 'Offer Filtering',
+      description: 'Apply business rules to filter valid offers for the customer.',
+      rules: [],
+      expanded: false,
+      executionFlowEnabled: true,
+      passOutcome: 'proceed',
+      failOutcome: 'auto-denial',
+    },
+  },
+  {
+    id: 'optimization-1',
+    type: 'offer-optimization',
+    position: { x: 100, y: 500 },
+    data: {
+      label: 'Offer Optimization',
+      description: 'Select the best offer based on optimization criteria.',
+      goal: 'Maximize return',
+      expanded: false,
+    },
+  },
 ];
 
-export const initialEdges: Edge[] = [];
+export const initialEdges: Edge[] = [
+  {
+    id: 'e1-2',
+    source: 'application-decision-1',
+    sourceHandle: 'pass',
+    target: 'offer-filtering-1',
+    type: 'smoothstep',
+    animated: true,
+    style: { stroke: 'hsl(var(--workflow-success))' },
+  },
+  {
+    id: 'e2-3',
+    source: 'offer-filtering-1',
+    sourceHandle: 'pass',
+    target: 'optimization-1',
+    type: 'smoothstep',
+    animated: true,
+    style: { stroke: 'hsl(var(--workflow-success))' },
+  },
+];

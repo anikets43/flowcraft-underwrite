@@ -49,11 +49,11 @@ export const OfferOptimizationNode: React.FC<OfferOptimizationNodeProps> = ({ da
   };
 
   return (
-    <div className="min-w-[320px]">
+    <div className="min-w-[320px] relative">
       <Handle 
         type="target" 
         position={Position.Top} 
-        className="w-3 h-3 bg-workflow-danger border-2 border-background"
+        className="w-4 h-4 bg-workflow-danger border-2 border-background rounded-full -top-2"
       />
       
       <Card className={`bg-workflow-node-bg border-2 shadow-node transition-all ${
@@ -65,9 +65,10 @@ export const OfferOptimizationNode: React.FC<OfferOptimizationNodeProps> = ({ da
               <div className="p-2 rounded-lg bg-workflow-danger/10">
                 <Zap className="w-4 h-4 text-workflow-danger" />
               </div>
-              <Badge variant="secondary" className="text-xs bg-workflow-danger-bg text-workflow-danger">
-                Offer Optimization
-              </Badge>
+              <div>
+                <h3 className="font-medium text-sm text-foreground">{data.label}</h3>
+                <p className="text-xs text-muted-foreground mt-1">{data.description}</p>
+              </div>
             </div>
             <Button
               variant="ghost"
@@ -79,85 +80,41 @@ export const OfferOptimizationNode: React.FC<OfferOptimizationNodeProps> = ({ da
             </Button>
           </div>
 
-          {isEditing ? (
-            <div className="space-y-3">
-              <Input
-                value={editLabel}
-                onChange={(e) => setEditLabel(e.target.value)}
-                className="font-medium"
-                placeholder="Optimization name"
-              />
-              <Textarea
-                value={editDescription}
-                onChange={(e) => setEditDescription(e.target.value)}
-                className="text-sm resize-none"
-                rows={3}
-                placeholder="Optimization description"
-              />
-              <Input
-                value={editGoal}
-                onChange={(e) => setEditGoal(e.target.value)}
-                className="text-sm"
-                placeholder="Optimization goal"
-              />
-              <div className="flex gap-2">
-                <Button size="sm" onClick={handleSave} className="h-7 px-3">
-                  <Check className="w-3 h-3 mr-1" />
-                  Save
-                </Button>
-                <Button size="sm" variant="outline" onClick={handleCancel} className="h-7 px-3">
-                  <X className="w-3 h-3 mr-1" />
-                  Cancel
-                </Button>
-              </div>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-muted-foreground">Goal: {data.goal || 'Maximize return'}</span>
+              <Badge variant="secondary" className="text-xs bg-workflow-danger-bg text-workflow-danger">
+                Offer Optimization
+              </Badge>
             </div>
-          ) : (
-            <div className="space-y-2">
-              <h3 
-                className="font-medium text-foreground cursor-pointer hover:text-workflow-danger transition-colors"
-                onClick={() => setIsEditing(true)}
-              >
-                {data.label}
-              </h3>
-              <p 
-                className="text-sm text-muted-foreground cursor-pointer hover:text-foreground transition-colors"
-                onClick={() => setIsEditing(true)}
-              >
-                {data.description}
-              </p>
-            </div>
-          )}
-
-          {/* Fixed Pass/Fail Logic */}
-          <div className="mt-4 pt-4 border-t border-workflow-node-border">
-            <div className="space-y-2">
+            
+            <div className="flex justify-between items-center pt-3 border-t border-workflow-node-border">
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-workflow-success"></div>
-                <span className="text-xs text-muted-foreground">If PASS: AUTO APPROVAL</span>
+                <div className="w-3 h-3 bg-workflow-success rounded-full"></div>
+                <span className="text-xs text-workflow-success font-medium">Pass</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-workflow-danger"></div>
-                <span className="text-xs text-muted-foreground">If FAIL: AUTO DENIAL</span>
+                <span className="text-xs text-workflow-danger font-medium">Fail</span>
+                <div className="w-3 h-3 bg-workflow-danger rounded-full"></div>
               </div>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between mt-4 pt-3 border-t border-workflow-node-border">
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <ChevronRight className="w-3 h-3" />
-              Click to configure optimization
-            </div>
-            <div className="text-xs text-muted-foreground">
-              Final Step
             </div>
           </div>
         </div>
       </Card>
 
-      <Handle 
-        type="source" 
-        position={Position.Bottom} 
-        className="w-3 h-3 bg-workflow-danger border-2 border-background"
+      <Handle
+        type="source"
+        position={Position.Bottom}
+        id="pass"
+        className="w-4 h-4 bg-workflow-success border-2 border-background rounded-full -bottom-2"
+        style={{ left: '25%' }}
+      />
+      <Handle
+        type="source"
+        position={Position.Bottom}
+        id="fail"
+        className="w-4 h-4 bg-workflow-danger border-2 border-background rounded-full -bottom-2"
+        style={{ left: '75%' }}
       />
     </div>
   );
