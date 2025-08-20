@@ -66,7 +66,7 @@ export const initialEdges: Edge[] = [
   {
     id: 'e2-3',
     source: 'offer-filtering-1',
-    sourceHandle: 'continue',
+    sourceHandle: 'continue', 
     target: 'optimization-1',
     type: 'conditional',
     data: { condition: 'PASS' },

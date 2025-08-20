@@ -75,12 +75,13 @@ export const ConditionalEdge: React.FC<ConditionalEdgeProps> = ({
           <Button
             size="sm"
             variant="outline"
-            className={`h-6 px-2 text-xs font-medium border-2 bg-workflow-node-bg hover:bg-muted/50 ${
+            className={`h-6 px-2 text-xs font-medium border-2 bg-workflow-node-bg hover:bg-muted/50 transition-colors cursor-pointer ${
               isPass 
-                ? 'border-workflow-success text-workflow-success' 
-                : 'border-workflow-danger text-workflow-danger'
+                ? 'border-workflow-success text-workflow-success hover:bg-workflow-success/10' 
+                : 'border-workflow-danger text-workflow-danger hover:bg-workflow-danger/10'
             }`}
             onClick={handleToggle}
+            title="Click to toggle condition"
           >
             {condition}
           </Button>
