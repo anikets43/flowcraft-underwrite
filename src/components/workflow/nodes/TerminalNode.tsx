@@ -26,18 +26,21 @@ const terminalConfig = {
     color: 'text-workflow-danger',
     bgColor: 'bg-workflow-danger/10',
     borderColor: 'border-workflow-danger',
+    nodeBgColor: 'bg-red-50 dark:bg-red-950/20',
   },
   'manual-review': {
     icon: UserCheck,
     color: 'text-workflow-warning',
     bgColor: 'bg-workflow-warning/10',
     borderColor: 'border-workflow-warning',
+    nodeBgColor: 'bg-yellow-50 dark:bg-yellow-950/20',
   },
   'auto-approval': {
     icon: CheckCircle,
     color: 'text-workflow-success',
     bgColor: 'bg-workflow-success/10',
     borderColor: 'border-workflow-success',
+    nodeBgColor: 'bg-green-50 dark:bg-green-950/20',
   },
 };
 
@@ -63,7 +66,7 @@ export const TerminalNode: React.FC<TerminalNodeProps> = ({ data, selected }) =>
         />
       )}
       
-      <Card className={`bg-workflow-node-bg border-2 shadow-node transition-all ${
+      <Card className={`${config.nodeBgColor} border-2 shadow-node transition-all ${
         selected ? `${config.borderColor} shadow-elegant` : 'border-workflow-node-border'
       }`}>
         <div className="p-3">
