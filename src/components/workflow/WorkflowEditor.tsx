@@ -435,6 +435,11 @@ export const WorkflowEditor = () => {
                   case 'application-decision': return 'hsl(var(--primary))';
                   case 'offer-filtering': return 'hsl(var(--workflow-success))';
                   case 'offer-optimization': return 'hsl(var(--workflow-danger))';
+                  case 'terminal': 
+                    if (node.data?.terminalType === 'auto-denial') return 'hsl(var(--workflow-danger))';
+                    if (node.data?.terminalType === 'manual-review') return 'hsl(var(--workflow-warning))';
+                    if (node.data?.terminalType === 'auto-approval') return 'hsl(var(--workflow-success))';
+                    return 'hsl(var(--muted))';
                   default: return 'hsl(var(--muted))';
                 }
               }}
