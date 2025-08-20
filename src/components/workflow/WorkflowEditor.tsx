@@ -20,6 +20,7 @@ import { Card } from '@/components/ui/card';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { Play, Plus, Settings, Gift, Zap, XCircle, UserCheck, CheckCircle } from 'lucide-react';
 import { RulesSidebar } from './RulesSidebar';
+import { WorkflowValidation } from './WorkflowValidation';
 import { ApplicationDecisionNode } from './nodes/ApplicationDecisionNode';
 import { OfferFilteringNode } from './nodes/OfferFilteringNode';
 import { OfferOptimizationNode } from './nodes/OfferOptimizationNode';
@@ -300,11 +301,6 @@ export const WorkflowEditor = () => {
     setNodes((nds) => [...nds, newNode]);
   }, [nodes, setNodes, setEdges]);
 
-  const runWorkflow = () => {
-    console.log('Running workflow with nodes:', nodes);
-    // TODO: Implement workflow execution logic
-  };
-
   return (
     <SidebarProvider>
       <div className="h-screen w-full flex bg-workflow-canvas">
@@ -401,10 +397,16 @@ export const WorkflowEditor = () => {
               )}
             </div>
             
-            <Button onClick={runWorkflow} className="bg-gradient-primary shadow-elegant">
-              <Play className="w-4 h-4 mr-2" />
-              Run Workflow
-            </Button>
+            <WorkflowValidation
+              nodes={nodes}
+              edges={edges}
+              trigger={
+                <Button className="bg-gradient-primary shadow-elegant">
+                  <Play className="w-4 h-4 mr-2" />
+                  Run Workflow
+                </Button>
+              }
+            />
           </div>
 
           <ReactFlow
