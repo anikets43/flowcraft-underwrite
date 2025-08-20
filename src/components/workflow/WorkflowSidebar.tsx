@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { 
@@ -6,7 +6,9 @@ import {
   Zap, 
   Gift, 
   GitBranch,
-  Plus
+  Plus,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 
 interface WorkflowSidebarProps {
@@ -38,74 +40,115 @@ const nodeTypes = [
 ];
 
 export const WorkflowSidebar: React.FC<WorkflowSidebarProps> = ({ onAddNode }) => {
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
   return (
-    <div className="w-80 bg-workflow-sidebar border-r border-workflow-node-border p-4 overflow-y-auto">
-      <div className="flex items-center gap-2 mb-6">
-        <Settings className="w-6 h-6 text-workflow-sidebar-foreground" />
-        <h2 className="text-lg font-semibold text-workflow-sidebar-foreground">
-          Workflow Editor
-        </h2>
+    <div className={`${isCollapsed ? 'w-16' : 'w-80'} bg-workflow-sidebar border-r border-workflow-node-border p-4 overflow-y-auto transition-all duration-300`}>
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-2">
+          <Settings className="w-6 h-6 text-workflow-sidebar-foreground" />
+          {!isCollapsed && (
+            <h2 className="text-lg font-semibold text-workflow-sidebar-foreground">
+              Workflow Editor
+            </h2>
+          )}
+        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className="text-workflow-sidebar-foreground hover:bg-workflow-sidebar/20 p-1 h-8 w-8"
+        >
+          {isCollapsed ? (
+            <ChevronRight className="w-4 h-4" />
+          ) : (
+            <ChevronLeft className="w-4 h-4" />
+          )}
+        </Button>
       </div>
 
-      <div className="space-y-3">
-        <h3 className="text-sm font-medium text-workflow-sidebar-foreground/80 mb-3">
-          Available Blocks
-        </h3>
-        
-        {nodeTypes.map((nodeType) => {
-          const IconComponent = nodeType.icon;
-          return (
-            <Card
-              key={nodeType.type}
-              className="p-4 bg-workflow-node-bg border-workflow-node-border hover:shadow-node transition-all duration-200 cursor-pointer group"
-              onClick={() => onAddNode(nodeType.type)}
-            >
-              <div className="flex items-start gap-3">
+      {!isCollapsed ? (
+        <div className="space-y-3">
+          <h3 className="text-sm font-medium text-workflow-sidebar-foreground/80 mb-3">
+            Available Blocks
+          </h3>
+          
+          {nodeTypes.map((nodeType) => {
+            const IconComponent = nodeType.icon;
+            return (
+              <Card
+                key={nodeType.type}
+                className="p-4 bg-workflow-node-bg border-workflow-node-border hover:shadow-node transition-all duration-200 cursor-pointer group"
+                onClick={() => onAddNode(nodeType.type)}
+              >
+                <div className="flex items-start gap-3">
+                  <div className={`p-2 rounded-lg bg-workflow-canvas ${nodeType.color}`}>
+                    <IconComponent className="w-4 h-4" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-medium text-sm text-foreground">
+                        {nodeType.label}
+                      </h4>
+                      <Plus className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {nodeType.description}
+                    </p>
+                  </div>
+                </div>
+              </Card>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {nodeTypes.map((nodeType) => {
+            const IconComponent = nodeType.icon;
+            return (
+              <Button
+                key={nodeType.type}
+                variant="ghost"
+                size="sm"
+                className="w-full h-12 p-2 text-workflow-sidebar-foreground hover:bg-workflow-sidebar/20"
+                onClick={() => onAddNode(nodeType.type)}
+              >
                 <div className={`p-2 rounded-lg bg-workflow-canvas ${nodeType.color}`}>
                   <IconComponent className="w-4 h-4" />
                 </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between">
-                    <h4 className="font-medium text-sm text-foreground">
-                      {nodeType.label}
-                    </h4>
-                    <Plus className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {nodeType.description}
-                  </p>
-                </div>
-              </div>
-            </Card>
-          );
-        })}
-      </div>
-
-      <div className="mt-8 p-4 bg-workflow-node-bg/50 rounded-lg border border-workflow-node-border">
-        <h4 className="text-sm font-medium text-workflow-sidebar-foreground mb-2">
-          Quick Actions
-        </h4>
-        <div className="space-y-2">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="w-full justify-start text-xs"
-            onClick={() => onAddNode('application-decision')}
-          >
-            <Settings className="w-3 h-3 mr-2" />
-            Add Application Decision
-          </Button>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="w-full justify-start text-xs"
-            onClick={() => onAddNode('offer-filtering')}
-          >
-            <Gift className="w-3 h-3 mr-2" />
-            Add Offer Filtering
-          </Button>
+              </Button>
+            );
+          })}
         </div>
-      </div>
+      )}
+
+      {!isCollapsed && (
+        <div className="mt-8 p-4 bg-workflow-node-bg/50 rounded-lg border border-workflow-node-border">
+          <h4 className="text-sm font-medium text-workflow-sidebar-foreground mb-2">
+            Quick Actions
+          </h4>
+          <div className="space-y-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="w-full justify-start text-xs"
+              onClick={() => onAddNode('application-decision')}
+            >
+              <Settings className="w-3 h-3 mr-2" />
+              Add Application Decision
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="w-full justify-start text-xs"
+              onClick={() => onAddNode('offer-filtering')}
+            >
+              <Gift className="w-3 h-3 mr-2" />
+              Add Offer Filtering
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
