@@ -231,11 +231,13 @@ export const WorkflowEditor = () => {
   }, [setNodes]);
 
   const toggleEdgeCondition = useCallback((edgeId: string) => {
+    console.log('toggleEdgeCondition called for edge:', edgeId);
     setEdges((eds) => 
       eds.map((edge) => {
         if (edge.id === edgeId) {
           const currentCondition = edge.data?.condition || 'FAIL';
           const newCondition = currentCondition === 'PASS' ? 'FAIL' : 'PASS';
+          console.log('Toggling condition from', currentCondition, 'to', newCondition);
           return {
             ...edge,
             data: {

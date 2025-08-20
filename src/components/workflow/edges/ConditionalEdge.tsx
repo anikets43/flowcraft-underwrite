@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   BaseEdge,
   EdgeLabelRenderer,
@@ -48,8 +48,11 @@ export const ConditionalEdge: React.FC<ConditionalEdgeProps> = ({
   const isPass = condition === 'PASS';
 
   const handleToggle = () => {
+    console.log('Toggle clicked for edge:', id, 'current condition:', condition);
     if (data?.onToggleCondition) {
       data.onToggleCondition(id);
+    } else {
+      console.log('No onToggleCondition function found');
     }
   };
 
