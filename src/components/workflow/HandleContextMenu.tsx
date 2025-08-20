@@ -95,7 +95,7 @@ export const HandleContextMenu: React.FC<HandleContextMenuProps> = ({
                 <Button
                   key={`${option.type}-${option.subtype || ''}`}
                   variant="ghost"
-                  className="w-full justify-start p-2 h-auto text-left hover:bg-muted/50"
+                  className="w-full justify-start p-3 h-auto text-left hover:bg-muted/50"
                   onClick={() => {
                     onAddNode(option.type, option.subtype);
                     onClose();
@@ -104,7 +104,17 @@ export const HandleContextMenu: React.FC<HandleContextMenuProps> = ({
                   <div className={`p-1.5 rounded-md bg-muted mr-2 ${option.color}`}>
                     <IconComponent className="w-3 h-3" />
                   </div>
-                  <span className="text-xs font-medium">{option.label}</span>
+                  <div className="flex-1">
+                    <div className="text-xs font-medium">{option.label}</div>
+                    <div className="text-xs text-muted-foreground mt-0.5">
+                      {option.type === 'application-decision' && 'Add rule based decision points to approve or deny applications based on chosen criteria'}
+                      {option.type === 'offer-filtering' && 'Apply business, partner, or product‑specific rules to remove offers that cannot be extended'}
+                      {option.type === 'offer-optimization' && 'Review the full set of generated offers against a defined goal to maximize return or minimize risk'}
+                      {option.type === 'terminal' && option.subtype === 'manual-review' && 'Send application for manual review'}
+                      {option.type === 'terminal' && option.subtype === 'auto-denial' && 'Automatically deny the application'}
+                      {option.type === 'terminal' && option.subtype === 'auto-approval' && 'Automatically approve the application'}
+                    </div>
+                  </div>
                 </Button>
               );
             })}
