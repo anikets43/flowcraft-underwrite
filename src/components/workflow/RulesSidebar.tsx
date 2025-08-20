@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
 import {
   Sidebar,
   SidebarContent,
@@ -100,6 +101,10 @@ export const RulesSidebar: React.FC<RulesSidebarProps> = ({
     setEditingRule({ condition: '', action: '' });
   };
 
+  const handleSegmentationToggle = (checked: boolean) => {
+    onUpdateNode(selectedNode.id, { segmentation: checked });
+  };
+
   const IconComponent = getNodeIcon(selectedNode.type);
 
   return (
@@ -136,6 +141,20 @@ export const RulesSidebar: React.FC<RulesSidebarProps> = ({
               </Badge>
               <h3 className="font-medium text-foreground">{selectedNode.data.label}</h3>
               <p className="text-sm text-muted-foreground">{selectedNode.data.description}</p>
+            </div>
+
+            {/* Segmentation Toggle */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <h4 className="text-sm font-medium">Segmentation</h4>
+                <Switch
+                  checked={selectedNode.data.segmentation || false}
+                  onCheckedChange={handleSegmentationToggle}
+                />
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Enable customer segmentation for targeted processing
+              </p>
             </div>
 
             {/* Offer Optimization Goal */}
