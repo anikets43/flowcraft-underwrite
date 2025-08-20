@@ -18,7 +18,7 @@ import '@xyflow/react/dist/style.css';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { SidebarProvider } from '@/components/ui/sidebar';
-import { Play, Plus, Settings, Gift, Zap, XCircle, UserCheck, CheckCircle } from 'lucide-react';
+import { Play, Plus, Settings, Gift, Zap, XCircle, UserCheck, CheckCircle, HelpCircle, X } from 'lucide-react';
 import { RulesSidebar } from './RulesSidebar';
 import { WorkflowValidation } from './WorkflowValidation';
 import { ApplicationDecisionNode } from './nodes/ApplicationDecisionNode';
@@ -48,6 +48,7 @@ export const WorkflowEditor = () => {
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [selectedNodeForRules, setSelectedNodeForRules] = useState<Node | null>(null);
   const [showAddMenu, setShowAddMenu] = useState(false);
+  const [showHelperText, setShowHelperText] = useState(true);
   const [contextMenu, setContextMenu] = useState<{
     position: { x: number; y: number };
     handleType: 'left' | 'bottom';
@@ -414,17 +415,43 @@ export const WorkflowEditor = () => {
       <div className="h-screen w-full flex bg-workflow-canvas">
         <div className="flex-1 relative">
           {/* Helper Text */}
-          <div className="absolute top-4 left-4 z-10 max-w-md">
-            <div className="bg-background/95 backdrop-blur-sm border border-border rounded-lg p-4 shadow-lg">
-              <h3 className="font-semibold text-sm text-foreground mb-2">Build Your Decision Workflow</h3>
-              <div className="text-xs text-muted-foreground space-y-1.5">
-                <p>• Right-click dots to add connections</p>
-                <p>• Left dots (side) match target colors: <span className="text-yellow-600">yellow</span> for Manual Review, <span className="text-red-600">red</span> for Auto Denial, <span className="text-green-600">green</span> for Auto Approval</p>
-                <p>• Bottom dots (continue path) are always <span className="text-green-600">green</span></p>
-                <p>• Conditions automatically toggle opposite sides</p>
+          {showHelperText && (
+            <div className="absolute top-4 left-4 z-10 max-w-md">
+              <div className="bg-background/95 backdrop-blur-sm border border-border rounded-lg p-4 shadow-lg">
+                <div className="flex items-start justify-between mb-2">
+                  <h3 className="font-semibold text-sm text-foreground">Build Your Decision Workflow</h3>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="p-1 h-6 w-6 text-muted-foreground hover:text-foreground"
+                    onClick={() => setShowHelperText(false)}
+                  >
+                    <X className="w-3 h-3" />
+                  </Button>
+                </div>
+                <div className="text-xs text-muted-foreground space-y-1.5">
+                  <p>• Right-click dots to add connections</p>
+                  <p>• Left dots (side) match target colors: <span className="text-yellow-600">yellow</span> for Manual Review, <span className="text-red-600">red</span> for Auto Denial, <span className="text-green-600">green</span> for Auto Approval</p>
+                  <p>• Bottom dots (continue path) are always <span className="text-green-600">green</span></p>
+                  <p>• Conditions automatically toggle opposite sides</p>
+                </div>
               </div>
             </div>
-          </div>
+          )}
+
+          {/* Help Toggle Button */}
+          {!showHelperText && (
+            <div className="absolute top-4 left-4 z-10">
+              <Button
+                variant="outline"
+                size="sm"
+                className="bg-background/95 backdrop-blur-sm"
+                onClick={() => setShowHelperText(true)}
+              >
+                <HelpCircle className="w-4 h-4" />
+              </Button>
+            </div>
+          )}
 
           {/* Top Toolbar */}
           <div className="absolute top-4 right-4 flex justify-end items-center z-10">
