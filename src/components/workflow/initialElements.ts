@@ -76,7 +76,7 @@ export const initialEdges: Edge[] = [
     source: 'strategy-1',
     target: 'decision-1',
     sourceHandle: 'fail',
-    type: 'smoothstep',
+    type: 'insertable',
     style: { stroke: 'hsl(var(--workflow-danger))', strokeWidth: 2 },
   },
   {
@@ -84,7 +84,7 @@ export const initialEdges: Edge[] = [
     source: 'strategy-1',
     target: 'offer-1',
     sourceHandle: 'pass',
-    type: 'smoothstep',
+    type: 'insertable',
     style: { stroke: 'hsl(var(--workflow-success))', strokeWidth: 2 },
   },
   {
@@ -92,7 +92,7 @@ export const initialEdges: Edge[] = [
     source: 'decision-1',
     target: 'strategy-2',
     sourceHandle: 'true',
-    type: 'smoothstep',
+    type: 'insertable',
     style: { stroke: 'hsl(var(--workflow-success))', strokeWidth: 2 },
   },
 ];

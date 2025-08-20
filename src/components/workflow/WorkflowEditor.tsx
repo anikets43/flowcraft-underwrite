@@ -20,12 +20,17 @@ import { WorkflowSidebar } from './WorkflowSidebar';
 import { StrategyNode } from './nodes/StrategyNode';
 import { OfferNode } from './nodes/OfferNode';
 import { DecisionNode } from './nodes/DecisionNode';
+import { InsertableEdge } from './edges/InsertableEdge';
 import { initialNodes, initialEdges } from './initialElements';
 
 const nodeTypes = {
   strategy: StrategyNode,
   offer: OfferNode,
   decision: DecisionNode,
+};
+
+const edgeTypes = {
+  insertable: InsertableEdge,
 };
 
 export const WorkflowEditor = () => {
@@ -72,6 +77,57 @@ export const WorkflowEditor = () => {
     );
   }, [setNodes]);
 
+  const insertNodeBetween = useCallback((sourceId: string, targetId: string) => {
+    const sourceNode = nodes.find(n => n.id === sourceId);
+    const targetNode = nodes.find(n => n.id === targetId);
+    
+    if (!sourceNode || !targetNode) return;
+
+    // Create new node positioned between source and target
+    const newNode: Node = {
+      id: `strategy-${Date.now()}`,
+      type: 'strategy',
+      position: {
+        x: (sourceNode.position.x + targetNode.position.x) / 2,
+        y: (sourceNode.position.y + targetNode.position.y) / 2,
+      },
+      data: {
+        label: 'New Strategy',
+        description: 'Enter description...',
+        rules: [],
+        expanded: false,
+      },
+    };
+
+    // Update edges to connect through the new node
+    setEdges((eds) => 
+      eds.map((edge) => {
+        if (edge.source === sourceId && edge.target === targetId) {
+          // Replace the direct edge with two edges through the new node
+          return [
+            {
+              ...edge,
+              id: `${sourceId}-${newNode.id}`,
+              target: newNode.id,
+            },
+            {
+              id: `${newNode.id}-${targetId}`,
+              source: newNode.id,
+              target: targetId,
+              type: 'insertable',
+              sourceHandle: edge.sourceHandle,
+              targetHandle: edge.targetHandle,
+            },
+          ];
+        }
+        return edge;
+      }).flat()
+    );
+
+    // Add the new node
+    setNodes((nds) => [...nds, newNode]);
+  }, [nodes, setNodes, setEdges]);
+
   const runWorkflow = () => {
     console.log('Running workflow with nodes:', nodes);
     // TODO: Implement workflow execution logic
@@ -99,12 +155,19 @@ export const WorkflowEditor = () => {
               onUpdate: (data: any) => updateNodeData(node.id, data),
             }
           }))}
-          edges={edges}
+          edges={edges.map(edge => ({
+            ...edge,
+            data: {
+              ...edge.data,
+              onInsertNode: insertNodeBetween,
+            }
+          }))}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
           onNodeClick={onNodeClick}
           nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
           fitView
           className="workflow-canvas"
         >
