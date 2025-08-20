@@ -17,11 +17,12 @@ import '@xyflow/react/dist/style.css';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { SidebarProvider } from '@/components/ui/sidebar';
-import { Play, Plus, Settings, Gift, Zap } from 'lucide-react';
+import { Play, Plus, Settings, Gift, Zap, XCircle, UserCheck, CheckCircle } from 'lucide-react';
 import { RulesSidebar } from './RulesSidebar';
 import { ApplicationDecisionNode } from './nodes/ApplicationDecisionNode';
 import { OfferFilteringNode } from './nodes/OfferFilteringNode';
 import { OfferOptimizationNode } from './nodes/OfferOptimizationNode';
+import { TerminalNode } from './nodes/TerminalNode';
 import { InsertableEdge } from './edges/InsertableEdge';
 import { initialNodes, initialEdges } from './initialElements';
 
@@ -29,6 +30,7 @@ const nodeTypes = {
   'application-decision': ApplicationDecisionNode,
   'offer-filtering': OfferFilteringNode,
   'offer-optimization': OfferOptimizationNode,
+  'terminal': TerminalNode,
 };
 
 const edgeTypes = {
@@ -66,6 +68,33 @@ export const WorkflowEditor = () => {
     },
   ];
 
+  const terminalBlocks = [
+    {
+      type: 'terminal',
+      subtype: 'auto-denial',
+      label: 'Auto Denial',
+      description: 'Automatically deny the application',
+      icon: XCircle,
+      color: 'text-workflow-danger',
+    },
+    {
+      type: 'terminal',
+      subtype: 'manual-review',
+      label: 'Manual Review',
+      description: 'Send application for manual review',
+      icon: UserCheck,
+      color: 'text-workflow-warning',
+    },
+    {
+      type: 'terminal',
+      subtype: 'auto-approval',
+      label: 'Auto Approval',
+      description: 'Automatically approve the application',
+      icon: CheckCircle,
+      color: 'text-workflow-success',
+    },
+  ];
+
   const onConnect = useCallback(
     (params: Connection) => setEdges((eds) => addEdge({ ...params, type: 'insertable' }, eds)),
     [setEdges],
@@ -76,8 +105,8 @@ export const WorkflowEditor = () => {
     setSelectedNodeForRules(node);
   }, [selectedNodeId]);
 
-  const addNode = useCallback((type: string) => {
-    const getNodeData = (nodeType: string) => {
+  const addNode = useCallback((type: string, subtype?: string) => {
+    const getNodeData = (nodeType: string, nodeSubtype?: string) => {
       const baseData = {
         expanded: false,
         executionFlowEnabled: true,
@@ -107,16 +136,32 @@ export const WorkflowEditor = () => {
             goal: 'Maximize return',
             executionFlowEnabled: false, // Always disabled for optimization
           };
+        case 'terminal':
+          const terminalLabels = {
+            'auto-denial': 'STOP WITH AUTO DENIAL',
+            'manual-review': 'STOP WITH MANUAL REVIEW',
+            'auto-approval': 'STOP WITH AUTO APPROVAL',
+          };
+          const terminalDescriptions = {
+            'auto-denial': 'Automatically deny the application',
+            'manual-review': 'Send application for manual review',
+            'auto-approval': 'Automatically approve the application',
+          };
+          return {
+            label: terminalLabels[nodeSubtype as keyof typeof terminalLabels] || 'Terminal Event',
+            description: terminalDescriptions[nodeSubtype as keyof typeof terminalDescriptions] || 'Terminal event',
+            terminalType: nodeSubtype,
+          };
         default:
           return baseData;
       }
     };
 
     const newNode: Node = {
-      id: `${type}-${Date.now()}`,
+      id: `${type}-${subtype || ''}-${Date.now()}`,
       type,
       position: { x: Math.random() * 300, y: Math.random() * 300 },
-      data: getNodeData(type),
+      data: getNodeData(type, subtype),
     };
     setNodes((nds) => [...nds, newNode]);
   }, [setNodes]);
@@ -273,7 +318,12 @@ export const WorkflowEditor = () => {
                       <h3 className="text-sm font-semibold text-gray-900 mb-3">
                         Add New Block
                       </h3>
-                      <div className="space-y-2">
+                      
+                      {/* Strategy Blocks */}
+                      <div className="space-y-2 mb-4">
+                        <h4 className="text-xs font-medium text-gray-600 uppercase tracking-wide">
+                          Strategy Blocks
+                        </h4>
                         {availableBlocks.map((nodeType) => {
                           const IconComponent = nodeType.icon;
                           return (
@@ -294,6 +344,38 @@ export const WorkflowEditor = () => {
                                 </h4>
                                 <p className="text-xs text-gray-500">
                                   {nodeType.description}
+                                </p>
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      {/* Terminal Blocks */}
+                      <div className="space-y-2 border-t pt-4">
+                        <h4 className="text-xs font-medium text-gray-600 uppercase tracking-wide">
+                          Terminal Blocks
+                        </h4>
+                        {terminalBlocks.map((terminalType) => {
+                          const IconComponent = terminalType.icon;
+                          return (
+                            <button
+                              key={`${terminalType.type}-${terminalType.subtype}`}
+                              className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors text-left"
+                              onClick={() => {
+                                addNode(terminalType.type, terminalType.subtype);
+                                setShowAddMenu(false);
+                              }}
+                            >
+                              <div className={`p-2 rounded-lg bg-gray-100 ${terminalType.color}`}>
+                                <IconComponent className="w-4 h-4" />
+                              </div>
+                              <div className="flex-1">
+                                <h4 className="font-medium text-sm text-gray-900">
+                                  {terminalType.label}
+                                </h4>
+                                <p className="text-xs text-gray-500">
+                                  {terminalType.description}
                                 </p>
                               </div>
                             </button>

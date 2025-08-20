@@ -60,6 +60,8 @@ export default {
 					'node-shadow': 'hsl(var(--workflow-node-shadow))',
 					success: 'hsl(var(--workflow-success))',
 					'success-bg': 'hsl(var(--workflow-success-bg))',
+					warning: 'hsl(var(--workflow-warning))',
+					'warning-bg': 'hsl(var(--workflow-warning-bg))',
 					danger: 'hsl(var(--workflow-danger))',
 					'danger-bg': 'hsl(var(--workflow-danger-bg))',
 					sidebar: 'hsl(var(--workflow-sidebar))',
