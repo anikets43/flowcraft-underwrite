@@ -3,8 +3,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   Sidebar,
   SidebarContent,
@@ -33,13 +31,6 @@ interface RulesSidebarProps {
   onUpdateNode: (nodeId: string, data: any) => void;
   onClose: () => void;
 }
-
-const outcomeOptions = [
-  { value: 'proceed', label: 'PROCEED TO NEXT STRATEGY' },
-  { value: 'auto-denial', label: 'STOP WITH AUTO DENIAL' },
-  { value: 'manual-review', label: 'STOP WITH MANUAL REVIEW' },
-  { value: 'auto-approval', label: 'STOP WITH AUTO APPROVAL' },
-];
 
 export const RulesSidebar: React.FC<RulesSidebarProps> = ({
   selectedNode,
@@ -76,20 +67,6 @@ export const RulesSidebar: React.FC<RulesSidebarProps> = ({
       case 'offer-optimization': return 'Offer Optimization';
       default: return 'Node';
     }
-  };
-
-  const handleExecutionFlowToggle = (enabled: boolean) => {
-    onUpdateNode(selectedNode.id, { 
-      executionFlowEnabled: enabled,
-      passOutcome: enabled ? (selectedNode.data.passOutcome || 'proceed') : '',
-      failOutcome: enabled ? (selectedNode.data.failOutcome || 'auto-denial') : ''
-    });
-  };
-
-  const handleOutcomeChange = (type: 'pass' | 'fail', value: string) => {
-    onUpdateNode(selectedNode.id, {
-      [`${type}Outcome`]: value
-    });
   };
 
   const addRule = () => {
@@ -160,65 +137,6 @@ export const RulesSidebar: React.FC<RulesSidebarProps> = ({
               <h3 className="font-medium text-foreground">{selectedNode.data.label}</h3>
               <p className="text-sm text-muted-foreground">{selectedNode.data.description}</p>
             </div>
-
-            {/* Execution Flow - Only for Application Decision and Offer Filtering */}
-            {selectedNode.type !== 'offer-optimization' && (
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium">Execution Flow</label>
-                  <Switch
-                    checked={selectedNode.data.executionFlowEnabled}
-                    onCheckedChange={handleExecutionFlowToggle}
-                  />
-                </div>
-
-                {selectedNode.data.executionFlowEnabled ? (
-                  <div className="space-y-3">
-                    <div className="space-y-2">
-                      <label className="text-xs text-muted-foreground">If PASS:</label>
-                      <Select
-                        value={selectedNode.data.passOutcome || 'proceed'}
-                        onValueChange={(value) => handleOutcomeChange('pass', value)}
-                      >
-                        <SelectTrigger className="h-8 text-xs">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {outcomeOptions.map((option) => (
-                            <SelectItem key={option.value} value={option.value} className="text-xs">
-                              {option.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <label className="text-xs text-muted-foreground">If FAIL:</label>
-                      <Select
-                        value={selectedNode.data.failOutcome || 'auto-denial'}
-                        onValueChange={(value) => handleOutcomeChange('fail', value)}
-                      >
-                        <SelectTrigger className="h-8 text-xs">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {outcomeOptions.map((option) => (
-                            <SelectItem key={option.value} value={option.value} className="text-xs">
-                              {option.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="text-xs text-muted-foreground p-2 bg-workflow-canvas rounded border">
-                    All Requests Will PROCEED TO NEXT STRATEGY
-                  </div>
-                )}
-              </div>
-            )}
 
             {/* Offer Optimization Goal */}
             {selectedNode.type === 'offer-optimization' && (

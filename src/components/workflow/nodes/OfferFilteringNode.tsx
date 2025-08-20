@@ -1,20 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Handle, Position } from '@xyflow/react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { 
   Gift, 
-  ChevronDown, 
-  ChevronRight, 
   Trash2, 
-  Plus,
-  Check,
-  X,
   Copy
 } from 'lucide-react';
 
@@ -23,10 +14,6 @@ interface OfferFilteringNodeProps {
     label: string;
     description: string;
     rules: Array<{ condition: string; action: string }>;
-    expanded: boolean;
-    executionFlowEnabled: boolean;
-    passOutcome: string;
-    failOutcome: string;
     onDelete: () => void;
     onUpdate: (data: any) => void;
     onDuplicate: () => void;
@@ -34,51 +21,7 @@ interface OfferFilteringNodeProps {
   selected: boolean;
 }
 
-const outcomeOptions = [
-  { value: 'proceed', label: 'PROCEED TO NEXT STRATEGY' },
-  { value: 'auto-denial', label: 'STOP WITH AUTO DENIAL' },
-  { value: 'manual-review', label: 'STOP WITH MANUAL REVIEW' },
-  { value: 'auto-approval', label: 'STOP WITH AUTO APPROVAL' },
-];
-
 export const OfferFilteringNode: React.FC<OfferFilteringNodeProps> = ({ data, selected }) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [editLabel, setEditLabel] = useState(data.label);
-  const [editDescription, setEditDescription] = useState(data.description);
-
-  const handleSave = () => {
-    data.onUpdate({
-      label: editLabel,
-      description: editDescription,
-    });
-    setIsEditing(false);
-  };
-
-  const handleCancel = () => {
-    setEditLabel(data.label);
-    setEditDescription(data.description);
-    setIsEditing(false);
-  };
-
-  const addRule = () => {
-    const newRules = [...(data.rules || []), { condition: 'New condition', action: 'New action' }];
-    data.onUpdate({ rules: newRules });
-  };
-
-  const handleExecutionFlowToggle = (enabled: boolean) => {
-    data.onUpdate({ 
-      executionFlowEnabled: enabled,
-      passOutcome: enabled ? (data.passOutcome || 'proceed') : '',
-      failOutcome: enabled ? (data.failOutcome || 'auto-denial') : ''
-    });
-  };
-
-  const handleOutcomeChange = (type: 'pass' | 'fail', value: string) => {
-    data.onUpdate({
-      [`${type}Outcome`]: value
-    });
-  };
-
   return (
     <div className="min-w-[320px] relative">
       <Handle 
@@ -129,48 +72,34 @@ export const OfferFilteringNode: React.FC<OfferFilteringNodeProps> = ({ data, se
               </Badge>
             </div>
             
-            {data.executionFlowEnabled && (
-              <div className="flex justify-between items-center pt-3 border-t border-workflow-node-border">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 bg-workflow-success rounded-full"></div>
-                  <span className="text-xs text-workflow-success font-medium">Pass</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-workflow-danger font-medium">Fail</span>
-                  <div className="w-3 h-3 bg-workflow-danger rounded-full"></div>
-                </div>
+            <div className="flex justify-between items-center pt-3 border-t border-workflow-node-border">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-workflow-success rounded-full"></div>
+                <span className="text-xs text-workflow-success font-medium">Pass</span>
               </div>
-            )}
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-workflow-danger font-medium">Fail</span>
+                <div className="w-3 h-3 bg-workflow-danger rounded-full"></div>
+              </div>
+            </div>
           </div>
         </div>
       </Card>
 
-      {data.executionFlowEnabled && (
-        <>
-          <Handle
-            type="source"
-            position={Position.Bottom}
-            id="pass"
-            className="w-4 h-4 bg-workflow-success border-2 border-background rounded-full -bottom-2"
-            style={{ left: '25%' }}
-          />
-          <Handle
-            type="source"
-            position={Position.Bottom}
-            id="fail"
-            className="w-4 h-4 bg-workflow-danger border-2 border-background rounded-full -bottom-2"
-            style={{ left: '75%' }}
-          />
-        </>
-      )}
-      
-      {!data.executionFlowEnabled && (
-        <Handle
-          type="source"
-          position={Position.Bottom}
-          className="w-4 h-4 bg-workflow-success border-2 border-background rounded-full -bottom-2"
-        />
-      )}
+      <Handle
+        type="source"
+        position={Position.Bottom}
+        id="pass"
+        className="w-4 h-4 bg-workflow-success border-2 border-background rounded-full -bottom-2"
+        style={{ left: '25%' }}
+      />
+      <Handle
+        type="source"
+        position={Position.Bottom}
+        id="fail"
+        className="w-4 h-4 bg-workflow-danger border-2 border-background rounded-full -bottom-2"
+        style={{ left: '75%' }}
+      />
     </div>
   );
 };
