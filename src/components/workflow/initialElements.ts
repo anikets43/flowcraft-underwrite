@@ -1,4 +1,4 @@
-import { Node, Edge } from '@xyflow/react';
+import { Node, Edge, MarkerType } from '@xyflow/react';
 
 export const initialNodes: Node[] = [
   {
@@ -60,6 +60,9 @@ export const initialEdges: Edge[] = [
     type: 'insertable',
     animated: true,
     style: { stroke: 'hsl(var(--workflow-success))' },
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+    },
   },
   {
     id: 'e2-3',
@@ -69,5 +72,8 @@ export const initialEdges: Edge[] = [
     type: 'insertable',
     animated: true,
     style: { stroke: 'hsl(var(--workflow-success))' },
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+    },
   },
 ];

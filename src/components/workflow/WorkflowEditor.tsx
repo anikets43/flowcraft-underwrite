@@ -11,6 +11,7 @@ import {
   Edge,
   Node,
   BackgroundVariant,
+  MarkerType,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
@@ -96,7 +97,13 @@ export const WorkflowEditor = () => {
   ];
 
   const onConnect = useCallback(
-    (params: Connection) => setEdges((eds) => addEdge({ ...params, type: 'insertable' }, eds)),
+    (params: Connection) => setEdges((eds) => addEdge({ 
+      ...params, 
+      type: 'insertable',
+      markerEnd: {
+        type: MarkerType.ArrowClosed,
+      },
+    }, eds)),
     [setEdges],
   );
 
@@ -266,6 +273,9 @@ export const WorkflowEditor = () => {
               id: `${sourceId}-${newNode.id}`,
               target: newNode.id,
               type: 'insertable',
+              markerEnd: {
+                type: MarkerType.ArrowClosed,
+              },
             },
             {
               id: `${newNode.id}-${targetId}`,
@@ -276,6 +286,9 @@ export const WorkflowEditor = () => {
               targetHandle: edge.targetHandle,
               animated: true,
               style: { stroke: 'hsl(var(--workflow-success))' },
+              markerEnd: {
+                type: MarkerType.ArrowClosed,
+              },
             },
           ];
         }
