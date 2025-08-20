@@ -65,18 +65,18 @@ export const InsertableEdge: React.FC<InsertableEdgeProps> = ({
       />
       <EdgeLabelRenderer>
         <div
-          className="absolute pointer-events-all"
+          className="absolute pointer-events-all z-10"
           style={{
             transform: `translate(-50%, -50%) translate(${labelX}px, ${labelY}px)`,
           }}
         >
           <Button
             size="sm"
-            variant="outline"
-            className="w-6 h-6 p-0 bg-background border-workflow-node-border hover:border-primary hover:bg-primary hover:text-primary-foreground transition-all"
+            variant="secondary"
+            className="w-8 h-8 p-0 bg-workflow-node-bg border-2 border-workflow-node-border hover:border-primary hover:bg-primary hover:text-primary-foreground transition-all shadow-node rounded-full"
             onClick={handleInsertClick}
           >
-            <Plus className="w-3 h-3" />
+            <Plus className="w-4 h-4" />
           </Button>
         </div>
       </EdgeLabelRenderer>
