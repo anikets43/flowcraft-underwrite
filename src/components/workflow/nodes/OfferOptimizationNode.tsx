@@ -10,7 +10,6 @@ import {
   ChevronDown, 
   ChevronRight, 
   Trash2,
-  Edit2,
   Check,
   X
 } from 'lucide-react';
@@ -29,30 +28,6 @@ interface OfferOptimizationNodeProps {
 }
 
 export const OfferOptimizationNode: React.FC<OfferOptimizationNodeProps> = ({ data, selected }) => {
-  const [isEditingLabel, setIsEditingLabel] = useState(false);
-  const [isEditingDescription, setIsEditingDescription] = useState(false);
-  const [tempLabel, setTempLabel] = useState(data.label);
-  const [tempDescription, setTempDescription] = useState(data.description);
-
-  const handleSaveLabel = () => {
-    data.onUpdate?.({ label: tempLabel });
-    setIsEditingLabel(false);
-  };
-
-  const handleCancelLabel = () => {
-    setTempLabel(data.label);
-    setIsEditingLabel(false);
-  };
-
-  const handleSaveDescription = () => {
-    data.onUpdate?.({ description: tempDescription });
-    setIsEditingDescription(false);
-  };
-
-  const handleCancelDescription = () => {
-    setTempDescription(data.description);
-    setIsEditingDescription(false);
-  };
   const [isEditing, setIsEditing] = useState(false);
   const [editLabel, setEditLabel] = useState(data.label);
   const [editDescription, setEditDescription] = useState(data.description);
@@ -107,74 +82,9 @@ export const OfferOptimizationNode: React.FC<OfferOptimizationNodeProps> = ({ da
               <div className="p-2 rounded-lg bg-workflow-danger/10">
                 <Zap className="w-4 h-4 text-workflow-danger" />
               </div>
-              <div className="flex-1">
-                {isEditingLabel ? (
-                  <div className="flex items-center gap-1">
-                    <Input
-                      value={tempLabel}
-                      onChange={(e) => setTempLabel(e.target.value)}
-                      className="h-6 text-sm font-medium"
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') handleSaveLabel();
-                        if (e.key === 'Escape') handleCancelLabel();
-                      }}
-                      autoFocus
-                    />
-                    <Button size="sm" variant="ghost" className="p-1 h-6 w-6" onClick={handleSaveLabel}>
-                      <Check className="w-3 h-3 text-green-600" />
-                    </Button>
-                    <Button size="sm" variant="ghost" className="p-1 h-6 w-6" onClick={handleCancelLabel}>
-                      <X className="w-3 h-3 text-red-600" />
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="group flex items-center gap-1">
-                    <h3 className="font-medium text-sm text-foreground">{data.label}</h3>
-                    <Button 
-                      size="sm" 
-                      variant="ghost" 
-                      className="p-1 h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity"
-                      onClick={() => setIsEditingLabel(true)}
-                    >
-                      <Edit2 className="w-2.5 h-2.5" />
-                    </Button>
-                  </div>
-                )}
-                
-                {isEditingDescription ? (
-                  <div className="flex items-start gap-1 mt-1">
-                    <Textarea
-                      value={tempDescription}
-                      onChange={(e) => setTempDescription(e.target.value)}
-                      className="text-xs resize-none min-h-[40px]"
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' && e.ctrlKey) handleSaveDescription();
-                        if (e.key === 'Escape') handleCancelDescription();
-                      }}
-                      autoFocus
-                    />
-                    <div className="flex flex-col gap-1">
-                      <Button size="sm" variant="ghost" className="p-1 h-4 w-4" onClick={handleSaveDescription}>
-                        <Check className="w-2.5 h-2.5 text-green-600" />
-                      </Button>
-                      <Button size="sm" variant="ghost" className="p-1 h-4 w-4" onClick={handleCancelDescription}>
-                        <X className="w-2.5 h-2.5 text-red-600" />
-                      </Button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="group flex items-start gap-1 mt-1">
-                    <p className="text-xs text-muted-foreground">{data.description}</p>
-                    <Button 
-                      size="sm" 
-                      variant="ghost" 
-                      className="p-1 h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity"
-                      onClick={() => setIsEditingDescription(true)}
-                    >
-                      <Edit2 className="w-2 h-2" />
-                    </Button>
-                  </div>
-                )}
+              <div>
+                <h3 className="font-medium text-sm text-foreground">{data.label}</h3>
+                <p className="text-xs text-muted-foreground mt-1">{data.description}</p>
               </div>
             </div>
             <Button
