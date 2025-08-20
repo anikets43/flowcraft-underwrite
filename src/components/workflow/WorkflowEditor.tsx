@@ -133,29 +133,56 @@ export const WorkflowEditor = () => {
     setNodes((nds) => [...nds, newNode]);
   }, [nodes, setNodes]);
 
-  const insertNodeBetween = useCallback((sourceId: string, targetId: string) => {
+  const insertNodeBetween = useCallback((sourceId: string, targetId: string, nodeType: string = 'application-decision') => {
     const sourceNode = nodes.find(n => n.id === sourceId);
     const targetNode = nodes.find(n => n.id === targetId);
     
     if (!sourceNode || !targetNode) return;
 
-    // Create new node positioned between source and target
-    const newNode: Node = {
-      id: `application-decision-${Date.now()}`,
-      type: 'application-decision',
-      position: {
-        x: (sourceNode.position.x + targetNode.position.x) / 2,
-        y: (sourceNode.position.y + targetNode.position.y) / 2,
-      },
-      data: {
-        label: 'New Application Decision',
-        description: 'Add rule based decision points to approve or deny applications',
-        rules: [],
+    const getNodeData = (type: string) => {
+      const baseData = {
         expanded: false,
         executionFlowEnabled: true,
         passOutcome: 'proceed',
         failOutcome: 'auto-denial',
+        rules: [],
+      };
+
+      switch (type) {
+        case 'application-decision':
+          return {
+            ...baseData,
+            label: 'New Application Decision',
+            description: 'Add rule based decision points to approve or deny applications based on chosen criteria',
+          };
+        case 'offer-filtering':
+          return {
+            ...baseData,
+            label: 'New Offer Filtering',
+            description: 'Apply business, partner, or product‑specific rules to remove offers that cannot be extended',
+          };
+        case 'offer-optimization':
+          return {
+            ...baseData,
+            label: 'New Offer Optimization',
+            description: 'Review the full set of generated offers against a defined goal to maximize return or minimize risk',
+            goal: 'Maximize return',
+            executionFlowEnabled: false, // Always disabled for optimization
+          };
+        default:
+          return baseData;
+      }
+    };
+
+    // Create new node positioned between source and target
+    const newNode: Node = {
+      id: `${nodeType}-${Date.now()}`,
+      type: nodeType,
+      position: {
+        x: (sourceNode.position.x + targetNode.position.x) / 2,
+        y: (sourceNode.position.y + targetNode.position.y) / 2,
       },
+      data: getNodeData(nodeType),
     };
 
     // Update edges to connect through the new node
