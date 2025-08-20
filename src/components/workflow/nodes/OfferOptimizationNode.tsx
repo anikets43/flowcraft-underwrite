@@ -142,34 +142,10 @@ export const OfferOptimizationNode: React.FC<OfferOptimizationNodeProps> = ({ da
             </div>
           </div>
 
-          {data.expanded && (
-            <div className="mt-4 pt-4 border-t border-workflow-node-border">
-              <div className="space-y-3">
-                <div>
-                  <h4 className="text-sm font-medium text-foreground mb-2">Optimization Goal</h4>
-                  <div className="p-2 bg-workflow-canvas rounded border border-workflow-node-border">
-                    <div className="text-xs text-muted-foreground">{data.goal || 'Maximize return'}</div>
-                  </div>
-                </div>
-                
-                <div>
-                  <h4 className="text-sm font-medium text-foreground mb-2">Selection Logic</h4>
-                  <div className="text-xs text-muted-foreground p-2 bg-workflow-canvas rounded border">
-                    System evaluates offer grid using defined objective and identifies the offer that best meets the goal
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
           <div className="flex items-center justify-between mt-4 pt-3 border-t border-workflow-node-border">
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              {data.expanded ? (
-                <ChevronDown className="w-3 h-3" />
-              ) : (
-                <ChevronRight className="w-3 h-3" />
-              )}
-              Click to {data.expanded ? 'collapse' : 'expand'}
+              <ChevronRight className="w-3 h-3" />
+              Click to configure optimization
             </div>
             <div className="text-xs text-muted-foreground">
               Final Step

@@ -15,8 +15,10 @@ import {
 import '@xyflow/react/dist/style.css';
 
 import { Button } from '@/components/ui/button';
+import { SidebarProvider } from '@/components/ui/sidebar';
 import { Play } from 'lucide-react';
 import { WorkflowSidebar } from './WorkflowSidebar';
+import { RulesSidebar } from './RulesSidebar';
 import { ApplicationDecisionNode } from './nodes/ApplicationDecisionNode';
 import { OfferFilteringNode } from './nodes/OfferFilteringNode';
 import { OfferOptimizationNode } from './nodes/OfferOptimizationNode';
@@ -37,6 +39,7 @@ export const WorkflowEditor = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+  const [selectedNodeForRules, setSelectedNodeForRules] = useState<Node | null>(null);
 
   const onConnect = useCallback(
     (params: Connection) => setEdges((eds) => addEdge(params, eds)),
@@ -45,6 +48,7 @@ export const WorkflowEditor = () => {
 
   const onNodeClick = useCallback((event: React.MouseEvent, node: Node) => {
     setSelectedNodeId(node.id === selectedNodeId ? null : node.id);
+    setSelectedNodeForRules(node);
   }, [selectedNodeId]);
 
   const addNode = useCallback((type: string) => {
@@ -189,64 +193,74 @@ export const WorkflowEditor = () => {
   };
 
   return (
-    <div className="h-screen w-full flex bg-workflow-canvas">
-      <WorkflowSidebar onAddNode={addNode} />
-      
-      <div className="flex-1 relative">
-        <div className="absolute top-4 right-4 z-10">
-          <Button onClick={runWorkflow} className="bg-gradient-primary shadow-elegant">
-            <Play className="w-4 h-4 mr-2" />
-            Run Workflow
-          </Button>
+    <SidebarProvider>
+      <div className="h-screen w-full flex bg-workflow-canvas">
+        <WorkflowSidebar onAddNode={addNode} />
+        
+        <div className="flex-1 relative">
+          <div className="absolute top-4 right-4 z-10">
+            <Button onClick={runWorkflow} className="bg-gradient-primary shadow-elegant">
+              <Play className="w-4 h-4 mr-2" />
+              Run Workflow
+            </Button>
+          </div>
+
+          <ReactFlow
+            nodes={nodes.map(node => ({
+              ...node,
+              data: {
+                ...node.data,
+                expanded: false, // Remove inline expansion since we use sidebar
+                onDelete: () => deleteNode(node.id),
+                onUpdate: (data: any) => updateNodeData(node.id, data),
+                onDuplicate: () => duplicateNode(node.id),
+              }
+            }))}
+            edges={edges.map(edge => ({
+              ...edge,
+              data: {
+                ...edge.data,
+                onInsertNode: insertNodeBetween,
+              }
+            }))}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
+            onNodeClick={onNodeClick}
+            nodeTypes={nodeTypes}
+            edgeTypes={edgeTypes}
+            fitView
+            className="workflow-canvas"
+          >
+            <Background 
+              variant={BackgroundVariant.Dots} 
+              gap={20} 
+              size={1}
+              className="bg-workflow-canvas"
+            />
+            <Controls className="bg-workflow-node-bg border-workflow-node-border" />
+            <MiniMap 
+              className="bg-workflow-node-bg border-workflow-node-border"
+              nodeColor={(node) => {
+                switch (node.type) {
+                  case 'application-decision': return 'hsl(var(--primary))';
+                  case 'offer-filtering': return 'hsl(var(--workflow-success))';
+                  case 'offer-optimization': return 'hsl(var(--workflow-danger))';
+                  default: return 'hsl(var(--muted))';
+                }
+              }}
+            />
+          </ReactFlow>
         </div>
 
-        <ReactFlow
-          nodes={nodes.map(node => ({
-            ...node,
-            data: {
-              ...node.data,
-              expanded: node.id === selectedNodeId,
-              onDelete: () => deleteNode(node.id),
-              onUpdate: (data: any) => updateNodeData(node.id, data),
-              onDuplicate: () => duplicateNode(node.id),
-            }
-          }))}
-          edges={edges.map(edge => ({
-            ...edge,
-            data: {
-              ...edge.data,
-              onInsertNode: insertNodeBetween,
-            }
-          }))}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          onNodeClick={onNodeClick}
-          nodeTypes={nodeTypes}
-          edgeTypes={edgeTypes}
-          fitView
-          className="workflow-canvas"
-        >
-          <Background 
-            variant={BackgroundVariant.Dots} 
-            gap={20} 
-            size={1}
-            className="bg-workflow-canvas"
+        {selectedNodeForRules && (
+          <RulesSidebar
+            selectedNode={selectedNodeForRules}
+            onUpdateNode={updateNodeData}
+            onClose={() => setSelectedNodeForRules(null)}
           />
-          <Controls className="bg-workflow-node-bg border-workflow-node-border" />
-          <MiniMap 
-            className="bg-workflow-node-bg border-workflow-node-border"
-            nodeColor={(node) => {
-              switch (node.type) {
-                case 'strategy': return 'hsl(var(--primary))';
-                case 'offer': return 'hsl(var(--workflow-success))';
-                case 'decision': return 'hsl(var(--workflow-danger))';
-                default: return 'hsl(var(--muted))';
-              }
-            }}
-          />
-        </ReactFlow>
+        )}
       </div>
-    </div>
+    </SidebarProvider>
   );
 };
