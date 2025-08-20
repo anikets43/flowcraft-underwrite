@@ -48,11 +48,8 @@ export const ConditionalEdge: React.FC<ConditionalEdgeProps> = ({
   const isPass = condition === 'PASS';
 
   const handleToggle = () => {
-    console.log('Toggle clicked for edge:', id, 'current condition:', condition);
     if (data?.onToggleCondition) {
       data.onToggleCondition(id);
-    } else {
-      console.log('No onToggleCondition function found');
     }
   };
 
@@ -78,12 +75,16 @@ export const ConditionalEdge: React.FC<ConditionalEdgeProps> = ({
           <Button
             size="sm"
             variant="outline"
-            className={`h-6 px-2 text-xs font-medium border-2 bg-workflow-node-bg hover:bg-muted/50 transition-colors cursor-pointer ${
+            className={`h-6 px-2 text-xs font-medium border-2 bg-workflow-node-bg hover:bg-muted/50 transition-colors cursor-pointer nodrag nopan ${
               isPass 
                 ? 'border-workflow-success text-workflow-success hover:bg-workflow-success/10' 
                 : 'border-workflow-danger text-workflow-danger hover:bg-workflow-danger/10'
             }`}
-            onClick={handleToggle}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleToggle();
+            }}
+            onMouseDown={(e) => e.stopPropagation()}
             title="Click to toggle condition"
           >
             {condition}
