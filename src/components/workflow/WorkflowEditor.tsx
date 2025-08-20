@@ -42,7 +42,7 @@ export const WorkflowEditor = () => {
   const [selectedNodeForRules, setSelectedNodeForRules] = useState<Node | null>(null);
 
   const onConnect = useCallback(
-    (params: Connection) => setEdges((eds) => addEdge(params, eds)),
+    (params: Connection) => setEdges((eds) => addEdge({ ...params, type: 'insertable' }, eds)),
     [setEdges],
   );
 
@@ -168,14 +168,17 @@ export const WorkflowEditor = () => {
               ...edge,
               id: `${sourceId}-${newNode.id}`,
               target: newNode.id,
+              type: 'insertable',
             },
             {
               id: `${newNode.id}-${targetId}`,
               source: newNode.id,
               target: targetId,
               type: 'insertable',
-              sourceHandle: edge.sourceHandle,
+              sourceHandle: 'pass',
               targetHandle: edge.targetHandle,
+              animated: true,
+              style: { stroke: 'hsl(var(--workflow-success))' },
             },
           ];
         }
