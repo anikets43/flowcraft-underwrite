@@ -15,8 +15,9 @@ import {
 import '@xyflow/react/dist/style.css';
 
 import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import { SidebarProvider } from '@/components/ui/sidebar';
-import { Play } from 'lucide-react';
+import { Play, Plus, Settings, Gift, Zap } from 'lucide-react';
 import { RulesSidebar } from './RulesSidebar';
 import { ApplicationDecisionNode } from './nodes/ApplicationDecisionNode';
 import { OfferFilteringNode } from './nodes/OfferFilteringNode';
@@ -39,6 +40,31 @@ export const WorkflowEditor = () => {
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [selectedNodeForRules, setSelectedNodeForRules] = useState<Node | null>(null);
+  const [showAddMenu, setShowAddMenu] = useState(false);
+
+  const availableBlocks = [
+    {
+      type: 'application-decision',
+      label: 'Application Decision',
+      description: 'Add rule based decision points to approve or deny applications',
+      icon: Settings,
+      color: 'text-primary',
+    },
+    {
+      type: 'offer-filtering',
+      label: 'Offer Filtering',
+      description: 'Apply business, partner, or product‑specific rules to remove offers',
+      icon: Gift,
+      color: 'text-workflow-success',
+    },
+    {
+      type: 'offer-optimization',
+      label: 'Offer Optimization',
+      description: 'Review the full set of generated offers against a defined goal',
+      icon: Zap,
+      color: 'text-workflow-danger',
+    },
+  ];
 
   const onConnect = useCallback(
     (params: Connection) => setEdges((eds) => addEdge({ ...params, type: 'insertable' }, eds)),
@@ -225,7 +251,61 @@ export const WorkflowEditor = () => {
     <SidebarProvider>
       <div className="h-screen w-full flex bg-workflow-canvas">
         <div className="flex-1 relative">
-          <div className="absolute top-4 right-4 z-10">
+          {/* Top Toolbar */}
+          <div className="absolute top-4 left-4 right-4 flex justify-between items-center z-10">
+            <div className="relative">
+              <Button 
+                onClick={() => setShowAddMenu(!showAddMenu)}
+                className="bg-primary shadow-elegant"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Add Block
+              </Button>
+              
+              {showAddMenu && (
+                <>
+                  <div 
+                    className="fixed inset-0 z-40" 
+                    onClick={() => setShowAddMenu(false)}
+                  />
+                  <Card className="absolute top-12 left-0 w-80 bg-white border border-gray-200 shadow-xl z-50">
+                    <div className="p-4">
+                      <h3 className="text-sm font-semibold text-gray-900 mb-3">
+                        Add New Block
+                      </h3>
+                      <div className="space-y-2">
+                        {availableBlocks.map((nodeType) => {
+                          const IconComponent = nodeType.icon;
+                          return (
+                            <button
+                              key={nodeType.type}
+                              className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors text-left"
+                              onClick={() => {
+                                addNode(nodeType.type);
+                                setShowAddMenu(false);
+                              }}
+                            >
+                              <div className={`p-2 rounded-lg bg-gray-100 ${nodeType.color}`}>
+                                <IconComponent className="w-4 h-4" />
+                              </div>
+                              <div className="flex-1">
+                                <h4 className="font-medium text-sm text-gray-900">
+                                  {nodeType.label}
+                                </h4>
+                                <p className="text-xs text-gray-500">
+                                  {nodeType.description}
+                                </p>
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </Card>
+                </>
+              )}
+            </div>
+            
             <Button onClick={runWorkflow} className="bg-gradient-primary shadow-elegant">
               <Play className="w-4 h-4 mr-2" />
               Run Workflow
