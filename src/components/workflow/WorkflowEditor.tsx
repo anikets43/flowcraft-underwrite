@@ -17,7 +17,6 @@ import '@xyflow/react/dist/style.css';
 import { Button } from '@/components/ui/button';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { Play } from 'lucide-react';
-import { WorkflowSidebar } from './WorkflowSidebar';
 import { RulesSidebar } from './RulesSidebar';
 import { ApplicationDecisionNode } from './nodes/ApplicationDecisionNode';
 import { OfferFilteringNode } from './nodes/OfferFilteringNode';
@@ -225,8 +224,6 @@ export const WorkflowEditor = () => {
   return (
     <SidebarProvider>
       <div className="h-screen w-full flex bg-workflow-canvas">
-        <WorkflowSidebar onAddNode={addNode} />
-        
         <div className="flex-1 relative">
           <div className="absolute top-4 right-4 z-10">
             <Button onClick={runWorkflow} className="bg-gradient-primary shadow-elegant">
