@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {
   BaseEdge,
@@ -49,8 +50,11 @@ export const ConditionalEdge: React.FC<ConditionalEdgeProps> = ({
   const condition = data?.condition || 'FAIL';
   const isPass = condition === 'PASS';
 
-  const handleToggle = () => {
+  const handleToggle = (e: React.MouseEvent) => {
     console.log('Button clicked! Edge ID:', id, 'Current condition:', condition);
+    e.stopPropagation();
+    e.preventDefault();
+    
     if (data?.onToggleCondition) {
       console.log('Calling onToggleCondition...');
       data.onToggleCondition(id);
@@ -72,25 +76,31 @@ export const ConditionalEdge: React.FC<ConditionalEdgeProps> = ({
       <BaseEdge path={edgePath} markerEnd={markerEnd} style={edgeStyle} />
       <EdgeLabelRenderer>
         <div
-          className="absolute pointer-events-all transform -translate-x-1/2 -translate-y-1/2"
+          className="absolute pointer-events-auto nodrag nopan"
           style={{
             left: labelX,
             top: labelY,
+            transform: 'translate(-50%, -50%)',
+            zIndex: 1000,
           }}
         >
           <Button
             size="sm"
             variant="outline"
-            className={`h-6 px-2 text-xs font-medium border-2 bg-workflow-node-bg hover:bg-muted/50 transition-colors cursor-pointer nodrag nopan ${
+            className={`h-6 px-2 text-xs font-medium border-2 bg-workflow-node-bg hover:bg-muted/50 transition-colors cursor-pointer ${
               isPass 
                 ? 'border-workflow-success text-workflow-success hover:bg-workflow-success/10' 
                 : 'border-workflow-danger text-workflow-danger hover:bg-workflow-danger/10'
             }`}
-            onClick={(e) => {
+            onClick={handleToggle}
+            onMouseDown={(e) => {
               e.stopPropagation();
-              handleToggle();
+              e.preventDefault();
             }}
-            onMouseDown={(e) => e.stopPropagation()}
+            onPointerDown={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+            }}
             title="Click to toggle condition"
           >
             {condition}
