@@ -141,7 +141,10 @@ export const WorkflowEditor = () => {
         x: sourceNode.position.x + (contextMenu.handleType === 'left' ? -250 : 0),
         y: sourceNode.position.y + (contextMenu.handleType === 'bottom' ? 150 : 0),
       },
-      data: getNodeData(nodeType, subtype),
+      data: {
+        ...getNodeData(nodeType, subtype),
+        isLeftTerminal: contextMenu.handleType === 'left' && nodeType === 'terminal',
+      },
     };
 
     // Create edge from source to new node

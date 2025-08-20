@@ -14,6 +14,7 @@ interface TerminalNodeProps {
     label: string;
     description: string;
     terminalType: 'auto-denial' | 'manual-review' | 'auto-approval';
+    isLeftTerminal?: boolean;
     onDelete: () => void;
   };
   selected: boolean;
@@ -43,14 +44,24 @@ const terminalConfig = {
 export const TerminalNode: React.FC<TerminalNodeProps> = ({ data, selected }) => {
   const config = terminalConfig[data.terminalType];
   const IconComponent = config.icon;
+  const isLeftTerminal = data.isLeftTerminal || false;
 
   return (
     <div className="min-w-[240px] relative">
-      <Handle 
-        type="target" 
-        position={Position.Top} 
-        className="w-4 h-4 bg-muted-foreground border-2 border-background rounded-full -top-2"
-      />
+      {/* Conditional handle placement based on terminal position */}
+      {isLeftTerminal ? (
+        <Handle 
+          type="target" 
+          position={Position.Right} 
+          className="w-4 h-4 bg-muted-foreground border-2 border-background rounded-full -right-2"
+        />
+      ) : (
+        <Handle 
+          type="target" 
+          position={Position.Top} 
+          className="w-4 h-4 bg-muted-foreground border-2 border-background rounded-full -top-2"
+        />
+      )}
       
       <Card className={`bg-workflow-node-bg border-2 shadow-node transition-all ${
         selected ? `${config.borderColor} shadow-elegant` : 'border-workflow-node-border'
