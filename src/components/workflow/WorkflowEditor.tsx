@@ -411,8 +411,10 @@ export const WorkflowEditor = () => {
 
   return (
     <div className="h-screen w-full flex bg-workflow-canvas">
-      {/* Main workflow area */}
-      <div className="flex-1 relative overflow-hidden">
+      {/* Main workflow area that shrinks when sidebar is open */}
+      <div className={`relative transition-all duration-500 ease-in-out ${
+        selectedNodeForRules ? 'flex-[2]' : 'flex-1'
+      }`}>
         {/* Top Toolbar */}
         <div className="absolute top-4 right-4 flex justify-end items-center z-10">
           <WorkflowValidation
@@ -483,16 +485,20 @@ export const WorkflowEditor = () => {
         </ReactFlow>
       </div>
 
-      {/* Sliding sidebar */}
-      <div className={`transition-all duration-300 ease-in-out overflow-hidden ${
-        selectedNodeForRules ? 'w-96' : 'w-0'
+      {/* Expandable sidebar that takes up space */}
+      <div className={`transition-all duration-500 ease-in-out ${
+        selectedNodeForRules 
+          ? 'flex-1 animate-slide-in-right opacity-100' 
+          : 'w-0 opacity-0 overflow-hidden'
       }`}>
         {selectedNodeForRules && (
-          <RulesSidebar
-            selectedNode={selectedNodeForRules}
-            onUpdateNode={updateNodeData}
-            onClose={() => setSelectedNodeForRules(null)}
-          />
+          <div className="w-full h-full animate-fade-in">
+            <RulesSidebar
+              selectedNode={selectedNodeForRules}
+              onUpdateNode={updateNodeData}
+              onClose={() => setSelectedNodeForRules(null)}
+            />
+          </div>
         )}
       </div>
 
