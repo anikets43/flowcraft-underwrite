@@ -413,7 +413,7 @@ export const WorkflowEditor = () => {
     <div className="h-screen w-full flex bg-workflow-canvas">
       {/* Main workflow area that shrinks when sidebar is open */}
       <div className={`relative transition-all duration-500 ease-in-out ${
-        selectedNodeForRules ? 'flex-[2]' : 'flex-1'
+        selectedNodeForRules ? 'w-[50vw]' : 'flex-1'
       }`}>
         {/* Top Toolbar */}
         <div className="absolute top-4 right-4 flex justify-end items-center z-10">
@@ -485,10 +485,10 @@ export const WorkflowEditor = () => {
         </ReactFlow>
       </div>
 
-      {/* Expandable sidebar that takes up space */}
+      {/* Expandable sidebar that takes up 50vw */}
       <div className={`transition-all duration-500 ease-in-out ${
         selectedNodeForRules 
-          ? 'flex-1 animate-slide-in-right opacity-100' 
+          ? 'w-[50vw] animate-slide-in-right opacity-100' 
           : 'w-0 opacity-0 overflow-hidden'
       }`}>
         {selectedNodeForRules && (
