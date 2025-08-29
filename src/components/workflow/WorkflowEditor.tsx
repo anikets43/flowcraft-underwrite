@@ -410,11 +410,11 @@ export const WorkflowEditor = () => {
   }, [nodes, setNodes, setEdges]);
 
   return (
-    <div className="h-screen w-full flex bg-workflow-canvas">
+    <div className="h-screen w-full flex bg-workflow-canvas overflow-hidden">
       {/* Main workflow area that shrinks when sidebar is open */}
       <div className={`relative transition-all duration-500 ease-in-out ${
-        selectedNodeForRules ? 'w-[50vw]' : 'flex-1'
-      }`}>
+        selectedNodeForRules ? 'w-[50vw]' : 'w-full'
+      } overflow-hidden`}>
         {/* Top Toolbar */}
         <div className="absolute top-4 right-4 flex justify-end items-center z-10">
           <WorkflowValidation
