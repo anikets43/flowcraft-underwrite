@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import {
   ReactFlow,
   addEdge,
@@ -7,6 +7,8 @@ import {
   Background,
   useNodesState,
   useEdgesState,
+  useReactFlow,
+  ReactFlowProvider,
   Connection,
   Edge,
   Node,
@@ -42,7 +44,7 @@ const edgeTypes = {
   conditional: ConditionalEdge,
 };
 
-export const WorkflowEditor = () => {
+const WorkflowEditorContent = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
@@ -53,6 +55,17 @@ export const WorkflowEditor = () => {
     handleType: 'left' | 'bottom';
     sourceNodeId: string;
   } | null>(null);
+
+  const { fitView } = useReactFlow();
+
+  // Trigger ReactFlow to resize when sidebar state changes
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fitView({ padding: 0.1 });
+    }, 300); // Match the transition duration
+
+    return () => clearTimeout(timer);
+  }, [selectedNodeForRules, fitView]);
 
   const availableBlocks = [
     {
@@ -515,5 +528,13 @@ export const WorkflowEditor = () => {
         />
       )}
     </div>
+  );
+};
+
+export const WorkflowEditor = () => {
+  return (
+    <ReactFlowProvider>
+      <WorkflowEditorContent />
+    </ReactFlowProvider>
   );
 };
