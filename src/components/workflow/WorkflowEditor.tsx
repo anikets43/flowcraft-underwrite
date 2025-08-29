@@ -429,60 +429,64 @@ export const WorkflowEditor = () => {
           />
         </div>
 
-        <ReactFlow
-          nodes={nodes.map(node => ({
-            ...node,
-            data: {
-              ...node.data,
-              expanded: false, // Remove inline expansion since we use sidebar
-              onDelete: () => deleteNode(node.id),
-              onUpdate: (data: any) => updateNodeData(node.id, data),
-              onDuplicate: () => duplicateNode(node.id),
-              onHandleContextMenu: (handleType: 'left' | 'bottom', position: { x: number; y: number }) => 
-                handleNodeContextMenu(node.id, handleType, position),
-            }
-          }))}
-          edges={edges.map(edge => ({
-            ...edge,
-            data: {
-              ...edge.data,
-              onInsertNode: insertNodeBetween,
-              onToggleCondition: toggleEdgeCondition,
-            }
-          }))}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          onNodeClick={onNodeClick}
-          nodeTypes={nodeTypes}
-          edgeTypes={edgeTypes}
-          fitView
-          className="workflow-canvas w-full h-full"
-        >
-          <Background 
-            variant={BackgroundVariant.Dots} 
-            gap={20} 
-            size={1}
-            className="bg-workflow-canvas"
-          />
-          <Controls className="bg-workflow-node-bg border-workflow-node-border" />
-          <MiniMap 
-            className="bg-workflow-node-bg border-workflow-node-border"
-            nodeColor={(node) => {
-              switch (node.type) {
-                case 'application-decision': return 'hsl(var(--primary))';
-                case 'offer-filtering': return 'hsl(var(--workflow-success))';
-                case 'offer-optimization': return 'hsl(var(--workflow-danger))';
-                case 'terminal': 
-                  if (node.data?.terminalType === 'auto-denial') return 'hsl(var(--workflow-danger))';
-                  if (node.data?.terminalType === 'manual-review') return 'hsl(var(--workflow-warning))';
-                  if (node.data?.terminalType === 'auto-approval') return 'hsl(var(--workflow-success))';
-                  return 'hsl(var(--muted))';
-                default: return 'hsl(var(--muted))';
+        <div className="w-full h-full">
+          <ReactFlow
+            nodes={nodes.map(node => ({
+              ...node,
+              data: {
+                ...node.data,
+                expanded: false, // Remove inline expansion since we use sidebar
+                onDelete: () => deleteNode(node.id),
+                onUpdate: (data: any) => updateNodeData(node.id, data),
+                onDuplicate: () => duplicateNode(node.id),
+                onHandleContextMenu: (handleType: 'left' | 'bottom', position: { x: number; y: number }) => 
+                  handleNodeContextMenu(node.id, handleType, position),
               }
-            }}
-          />
-        </ReactFlow>
+            }))}
+            edges={edges.map(edge => ({
+              ...edge,
+              data: {
+                ...edge.data,
+                onInsertNode: insertNodeBetween,
+                onToggleCondition: toggleEdgeCondition,
+              }
+            }))}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
+            onNodeClick={onNodeClick}
+            nodeTypes={nodeTypes}
+            edgeTypes={edgeTypes}
+            fitView
+            fitViewOptions={{ padding: 0.1 }}
+            className="workflow-canvas"
+            style={{ width: '100%', height: '100%' }}
+          >
+            <Background 
+              variant={BackgroundVariant.Dots} 
+              gap={20} 
+              size={1}
+              className="bg-workflow-canvas"
+            />
+            <Controls className="bg-workflow-node-bg border-workflow-node-border" />
+            <MiniMap 
+              className="bg-workflow-node-bg border-workflow-node-border"
+              nodeColor={(node) => {
+                switch (node.type) {
+                  case 'application-decision': return 'hsl(var(--primary))';
+                  case 'offer-filtering': return 'hsl(var(--workflow-success))';
+                  case 'offer-optimization': return 'hsl(var(--workflow-danger))';
+                  case 'terminal': 
+                    if (node.data?.terminalType === 'auto-denial') return 'hsl(var(--workflow-danger))';
+                    if (node.data?.terminalType === 'manual-review') return 'hsl(var(--workflow-warning))';
+                    if (node.data?.terminalType === 'auto-approval') return 'hsl(var(--workflow-success))';
+                    return 'hsl(var(--muted))';
+                  default: return 'hsl(var(--muted))';
+                }
+              }}
+            />
+          </ReactFlow>
+        </div>
       </div>
 
       {/* Expandable sidebar that takes up 50vw */}
