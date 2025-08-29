@@ -62,7 +62,9 @@ const WorkflowEditorContent = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       fitView({ padding: 0.1 });
-    }, 300); // Match the transition duration
+      // Force ReactFlow to recalculate dimensions
+      window.dispatchEvent(new Event('resize'));
+    }, 100);
 
     return () => clearTimeout(timer);
   }, [selectedNodeForRules, fitView]);
