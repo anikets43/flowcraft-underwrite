@@ -412,7 +412,8 @@ export const WorkflowEditor = () => {
   return (
     <SidebarProvider>
       <div className="h-screen w-full flex bg-workflow-canvas">
-        <div className="flex-1 relative">
+        {/* Main workflow area that slides left when sidebar is open */}
+        <div className={`flex-1 relative transition-all duration-300 ${selectedNodeForRules ? 'mr-96' : ''}`}>
           {/* Top Toolbar */}
           <div className="absolute top-4 right-4 flex justify-end items-center z-10">
             <WorkflowValidation
@@ -483,12 +484,15 @@ export const WorkflowEditor = () => {
           </ReactFlow>
         </div>
 
+        {/* Fixed position sidebar that slides in from the right */}
         {selectedNodeForRules && (
-          <RulesSidebar
-            selectedNode={selectedNodeForRules}
-            onUpdateNode={updateNodeData}
-            onClose={() => setSelectedNodeForRules(null)}
-          />
+          <div className="fixed top-0 right-0 h-full w-96 z-20 transform transition-transform duration-300 ease-in-out">
+            <RulesSidebar
+              selectedNode={selectedNodeForRules}
+              onUpdateNode={updateNodeData}
+              onClose={() => setSelectedNodeForRules(null)}
+            />
+          </div>
         )}
 
         {contextMenu && (

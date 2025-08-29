@@ -108,13 +108,8 @@ export const RulesSidebar: React.FC<RulesSidebarProps> = ({
   const IconComponent = getNodeIcon(selectedNode.type);
 
   return (
-    <Sidebar 
-      className="w-96"
-      side="right"
-    >
-      <SidebarTrigger className="m-2 self-start" onClick={onClose} />
-      
-      <SidebarContent className="p-4">
+    <div className="w-full h-full bg-background border-l border-border shadow-lg">
+      <SidebarContent className="p-4 h-full">
         <SidebarGroup>
           <SidebarGroupLabel className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -278,6 +273,6 @@ export const RulesSidebar: React.FC<RulesSidebarProps> = ({
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-    </Sidebar>
+    </div>
   );
 };
