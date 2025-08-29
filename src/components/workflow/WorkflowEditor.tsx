@@ -410,100 +410,100 @@ export const WorkflowEditor = () => {
   }, [nodes, setNodes, setEdges]);
 
   return (
-    <SidebarProvider>
-      <div className="h-screen w-full flex bg-workflow-canvas">
-        {/* Main workflow area that slides left when sidebar is open */}
-        <div className={`flex-1 relative transition-all duration-300 ${selectedNodeForRules ? 'mr-96' : ''}`}>
-          {/* Top Toolbar */}
-          <div className="absolute top-4 right-4 flex justify-end items-center z-10">
-            <WorkflowValidation
-              nodes={nodes}
-              edges={edges}
-              trigger={
-                <Button className="bg-gradient-primary shadow-elegant">
-                  <Play className="w-4 h-4 mr-2" />
-                  Run Workflow
-                </Button>
-              }
-            />
-          </div>
-
-          <ReactFlow
-            nodes={nodes.map(node => ({
-              ...node,
-              data: {
-                ...node.data,
-                expanded: false, // Remove inline expansion since we use sidebar
-                onDelete: () => deleteNode(node.id),
-                onUpdate: (data: any) => updateNodeData(node.id, data),
-                onDuplicate: () => duplicateNode(node.id),
-                onHandleContextMenu: (handleType: 'left' | 'bottom', position: { x: number; y: number }) => 
-                  handleNodeContextMenu(node.id, handleType, position),
-              }
-            }))}
-            edges={edges.map(edge => ({
-              ...edge,
-              data: {
-                ...edge.data,
-                onInsertNode: insertNodeBetween,
-                onToggleCondition: toggleEdgeCondition,
-              }
-            }))}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            onConnect={onConnect}
-            onNodeClick={onNodeClick}
-            nodeTypes={nodeTypes}
-            edgeTypes={edgeTypes}
-            fitView
-            className="workflow-canvas"
-          >
-            <Background 
-              variant={BackgroundVariant.Dots} 
-              gap={20} 
-              size={1}
-              className="bg-workflow-canvas"
-            />
-            <Controls className="bg-workflow-node-bg border-workflow-node-border" />
-            <MiniMap 
-              className="bg-workflow-node-bg border-workflow-node-border"
-              nodeColor={(node) => {
-                switch (node.type) {
-                  case 'application-decision': return 'hsl(var(--primary))';
-                  case 'offer-filtering': return 'hsl(var(--workflow-success))';
-                  case 'offer-optimization': return 'hsl(var(--workflow-danger))';
-                  case 'terminal': 
-                    if (node.data?.terminalType === 'auto-denial') return 'hsl(var(--workflow-danger))';
-                    if (node.data?.terminalType === 'manual-review') return 'hsl(var(--workflow-warning))';
-                    if (node.data?.terminalType === 'auto-approval') return 'hsl(var(--workflow-success))';
-                    return 'hsl(var(--muted))';
-                  default: return 'hsl(var(--muted))';
-                }
-              }}
-            />
-          </ReactFlow>
+    <div className="h-screen w-full flex bg-workflow-canvas">
+      {/* Main workflow area */}
+      <div className="flex-1 relative overflow-hidden">
+        {/* Top Toolbar */}
+        <div className="absolute top-4 right-4 flex justify-end items-center z-10">
+          <WorkflowValidation
+            nodes={nodes}
+            edges={edges}
+            trigger={
+              <Button className="bg-gradient-primary shadow-elegant">
+                <Play className="w-4 h-4 mr-2" />
+                Run Workflow
+              </Button>
+            }
+          />
         </div>
 
-        {/* Fixed position sidebar that slides in from the right */}
-        {selectedNodeForRules && (
-          <div className="fixed top-0 right-0 h-full w-96 z-20 transform transition-transform duration-300 ease-in-out">
-            <RulesSidebar
-              selectedNode={selectedNodeForRules}
-              onUpdateNode={updateNodeData}
-              onClose={() => setSelectedNodeForRules(null)}
-            />
-          </div>
-        )}
+        <ReactFlow
+          nodes={nodes.map(node => ({
+            ...node,
+            data: {
+              ...node.data,
+              expanded: false, // Remove inline expansion since we use sidebar
+              onDelete: () => deleteNode(node.id),
+              onUpdate: (data: any) => updateNodeData(node.id, data),
+              onDuplicate: () => duplicateNode(node.id),
+              onHandleContextMenu: (handleType: 'left' | 'bottom', position: { x: number; y: number }) => 
+                handleNodeContextMenu(node.id, handleType, position),
+            }
+          }))}
+          edges={edges.map(edge => ({
+            ...edge,
+            data: {
+              ...edge.data,
+              onInsertNode: insertNodeBetween,
+              onToggleCondition: toggleEdgeCondition,
+            }
+          }))}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onConnect={onConnect}
+          onNodeClick={onNodeClick}
+          nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
+          fitView
+          className="workflow-canvas w-full h-full"
+        >
+          <Background 
+            variant={BackgroundVariant.Dots} 
+            gap={20} 
+            size={1}
+            className="bg-workflow-canvas"
+          />
+          <Controls className="bg-workflow-node-bg border-workflow-node-border" />
+          <MiniMap 
+            className="bg-workflow-node-bg border-workflow-node-border"
+            nodeColor={(node) => {
+              switch (node.type) {
+                case 'application-decision': return 'hsl(var(--primary))';
+                case 'offer-filtering': return 'hsl(var(--workflow-success))';
+                case 'offer-optimization': return 'hsl(var(--workflow-danger))';
+                case 'terminal': 
+                  if (node.data?.terminalType === 'auto-denial') return 'hsl(var(--workflow-danger))';
+                  if (node.data?.terminalType === 'manual-review') return 'hsl(var(--workflow-warning))';
+                  if (node.data?.terminalType === 'auto-approval') return 'hsl(var(--workflow-success))';
+                  return 'hsl(var(--muted))';
+                default: return 'hsl(var(--muted))';
+              }
+            }}
+          />
+        </ReactFlow>
+      </div>
 
-        {contextMenu && (
-          <HandleContextMenu
-            position={contextMenu.position}
-            handleType={contextMenu.handleType}
-            onAddNode={handleContextMenuAddNode}
-            onClose={() => setContextMenu(null)}
+      {/* Sliding sidebar */}
+      <div className={`transition-all duration-300 ease-in-out overflow-hidden ${
+        selectedNodeForRules ? 'w-96' : 'w-0'
+      }`}>
+        {selectedNodeForRules && (
+          <RulesSidebar
+            selectedNode={selectedNodeForRules}
+            onUpdateNode={updateNodeData}
+            onClose={() => setSelectedNodeForRules(null)}
           />
         )}
       </div>
-    </SidebarProvider>
+
+      {contextMenu && (
+        <HandleContextMenu
+          position={contextMenu.position}
+          handleType={contextMenu.handleType}
+          onAddNode={handleContextMenuAddNode}
+          onClose={() => setContextMenu(null)}
+        />
+      )}
+    </div>
   );
 };
